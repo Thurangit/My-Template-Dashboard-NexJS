@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Headset, Send, ChevronDown, ArrowUp } from 'lucide-react';
+import { Headset, Send, ArrowUp } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 // Message type for type safety
@@ -69,8 +69,17 @@ const FloatingAssistantButton: React.FC = () => {
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.2 }}
-        className={`flex mb-4 ${isUser ? 'justify-end' : 'justify-start'}`}
+        className={`flex mb-4 relative ${isUser ? 'justify-end' : 'pl-14'}`}
       >
+        {!isUser && (
+          <div className="absolute left-0 top-0 w-12 h-12">
+            <img
+              src="/api/placeholder/48/48"
+              alt="AI Assistant"
+              className="w-12 h-12 rounded-full object-cover"
+            />
+          </div>
+        )}
         <div
           className={`
             max-w-[70%] p-3 rounded-lg 
@@ -118,7 +127,9 @@ const FloatingAssistantButton: React.FC = () => {
             className="
               fixed bottom-24 right-6 
               w-96 h-[500px] 
-              bg-white rounded-xl 
+              bg-white/70 
+              backdrop-blur-lg 
+              rounded-xl 
               shadow-2xl border 
               flex flex-col 
               overflow-hidden
@@ -127,16 +138,17 @@ const FloatingAssistantButton: React.FC = () => {
             {/* Chat Header */}
             <div
               className="
-                bg-indigo-800 text-white 
+                bg-indigo-800/80 text-white 
                 p-4 rounded-t-xl 
                 flex justify-between items-center
+                backdrop-blur-sm
               "
             >
               <h2 className="font-bold">Assistant IA</h2>
               <motion.button
                 whileHover={{ rotate: 180 }}
                 onClick={toggleChat}
-                className="hover:bg-indigo-700 p-1 rounded-full"
+                className="hover:bg-indigo-700/50 p-1 rounded-full"
               >
                 <ArrowUp />
               </motion.button>
@@ -150,7 +162,8 @@ const FloatingAssistantButton: React.FC = () => {
                 p-4 
                 scrollbar-thin 
                 scrollbar-thumb-indigo-500 
-                scrollbar-track-gray-200
+                scrollbar-track-gray-200/50
+                flex flex-col
               "
             >
               {/* Only show last 10 messages */}
@@ -162,9 +175,11 @@ const FloatingAssistantButton: React.FC = () => {
             {/* Message Input Area */}
             <div
               className="
-                p-4 border-t 
+                p-4 border-t border-gray-200/50
                 flex items-center 
                 space-x-2
+                bg-white/50
+                backdrop-blur-sm
               "
             >
               <input
@@ -175,7 +190,10 @@ const FloatingAssistantButton: React.FC = () => {
                 placeholder="Écrivez votre message..."
                 className="
                   flex-grow p-2 
-                  border rounded-lg 
+                  border border-gray-300/50 rounded-lg 
+                  bg-white/70
+                  text-black 
+                  placeholder-gray-600
                   focus:outline-none 
                   focus:ring-2 
                   focus:ring-indigo-500
@@ -185,9 +203,9 @@ const FloatingAssistantButton: React.FC = () => {
                 whileTap={{ scale: 0.9 }}
                 onClick={sendMessage}
                 className="
-                  bg-indigo-700 text-white 
+                  bg-indigo-700/80 text-white 
                   p-2 rounded-full 
-                  hover:bg-indigo-800 
+                  hover:bg-indigo-800/80
                   transition-colors
                 "
               >
