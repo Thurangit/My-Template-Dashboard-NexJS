@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Headset, Send, ChevronDown } from 'lucide-react';
-import { THEMEASSISTICON } from '@/styles/themes';
+import { Headset, Send, ChevronDown, ArrowUp } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 // Message type for type safety
 interface Message {
@@ -38,7 +38,7 @@ const FloatingAssistantButton: React.FC = () => {
     setTimeout(() => {
       const assistantResponse: Message = {
         id: Date.now() + 1,
-        text: `You said: "${inputMessage}". I'm a placeholder response!`,
+        text: `Vous avez dit : "${inputMessage}". Je suis une réponse de placeholder !`,
         sender: 'assistant',
         timestamp: new Date()
       };
@@ -64,123 +64,139 @@ const FloatingAssistantButton: React.FC = () => {
   const renderMessage = (message: Message) => {
     const isUser = message.sender === 'user';
     return (
-      <div
+      <motion.div
         key={message.id}
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.2 }}
         className={`flex mb-4 ${isUser ? 'justify-end' : 'justify-start'}`}
       >
         <div
           className={`
             max-w-[70%] p-3 rounded-lg 
             ${isUser
-              ? 'bg-blue-500 text-white'
+              ? 'bg-indigo-700 text-white'
               : 'bg-gray-200 text-black'}
           `}
         >
           {message.text}
         </div>
-      </div>
+      </motion.div>
     );
   };
 
   return (
     <div className="fixed bottom-6 right-6 z-50">
       {/* Floating Button */}
-      <button
+      <motion.button
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.95 }}
         onClick={toggleChat}
         className={`
-          ${THEMEASSISTICON.assist.background} 
+          bg-indigo-800 
           text-white rounded-full w-16 h-16 
           flex items-center justify-center 
-          shadow-lg hover:bg-blue-600 
+          shadow-2xl hover:bg-indigo-900 
           transition-colors z-50
         `}
       >
         <Headset className="w-8 h-8" />
-      </button>
+      </motion.button>
 
       {/* Chat Window */}
-      {isChatOpen && (
-        <div
-          className="
-            fixed bottom-24 right-6 
-            w-96 h-[500px] 
-            bg-white rounded-xl 
-            shadow-2xl border 
-            flex flex-col 
-            transition-all duration-300 
-            ease-in-out
-          "
-        >
-          {/* Chat Header */}
-          <div
+      <AnimatePresence>
+        {isChatOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 50 }}
+            transition={{
+              type: "spring",
+              stiffness: 300,
+              damping: 20
+            }}
             className="
-              bg-blue-500 text-white 
-              p-4 rounded-t-xl 
-              flex justify-between items-center
+              fixed bottom-24 right-6 
+              w-96 h-[500px] 
+              bg-white rounded-xl 
+              shadow-2xl border 
+              flex flex-col 
+              overflow-hidden
             "
           >
-            <h2 className="font-bold">AI Assistant</h2>
-            <button
-              onClick={toggleChat}
-              className="hover:bg-blue-600 p-1 rounded-full"
-            >
-              <ChevronDown />
-            </button>
-          </div>
-
-          {/* Messages Container */}
-          <div
-            ref={chatContainerRef}
-            className="
-              flex-grow overflow-y-auto 
-              p-4 
-              scrollbar-thin 
-              scrollbar-thumb-blue-500 
-              scrollbar-track-gray-200
-            "
-          >
-            {/* Only show last 10 messages */}
-            {messages
-              .slice(-10)
-              .map(renderMessage)}
-          </div>
-
-          {/* Message Input Area */}
-          <div
-            className="
-              p-4 border-t 
-              flex items-center 
-              space-x-2
-            "
-          >
-            <input
-              type="text"
-              value={inputMessage}
-              onChange={(e) => setInputMessage(e.target.value)}
-              onKeyPress={handleKeyPress}
-              placeholder="Type your message..."
+            {/* Chat Header */}
+            <div
               className="
-                flex-grow p-2 
-                border rounded-lg 
-                focus:outline-none 
-                focus:ring-2 
-                focus:ring-blue-500
-              "
-            />
-            <button
-              onClick={sendMessage}
-              className="
-                bg-blue-500 text-white 
-                p-2 rounded-full 
-                hover:bg-blue-600 
-                transition-colors
+                bg-indigo-800 text-white 
+                p-4 rounded-t-xl 
+                flex justify-between items-center
               "
             >
-              <Send className="w-6 h-6" />
-            </button>
-          </div>
-        </div>
-      )}
+              <h2 className="font-bold">Assistant IA</h2>
+              <motion.button
+                whileHover={{ rotate: 180 }}
+                onClick={toggleChat}
+                className="hover:bg-indigo-700 p-1 rounded-full"
+              >
+                <ArrowUp />
+              </motion.button>
+            </div>
+
+            {/* Messages Container */}
+            <div
+              ref={chatContainerRef}
+              className="
+                flex-grow overflow-y-auto 
+                p-4 
+                scrollbar-thin 
+                scrollbar-thumb-indigo-500 
+                scrollbar-track-gray-200
+              "
+            >
+              {/* Only show last 10 messages */}
+              {messages
+                .slice(-10)
+                .map(renderMessage)}
+            </div>
+
+            {/* Message Input Area */}
+            <div
+              className="
+                p-4 border-t 
+                flex items-center 
+                space-x-2
+              "
+            >
+              <input
+                type="text"
+                value={inputMessage}
+                onChange={(e) => setInputMessage(e.target.value)}
+                onKeyPress={handleKeyPress}
+                placeholder="Écrivez votre message..."
+                className="
+                  flex-grow p-2 
+                  border rounded-lg 
+                  focus:outline-none 
+                  focus:ring-2 
+                  focus:ring-indigo-500
+                "
+              />
+              <motion.button
+                whileTap={{ scale: 0.9 }}
+                onClick={sendMessage}
+                className="
+                  bg-indigo-700 text-white 
+                  p-2 rounded-full 
+                  hover:bg-indigo-800 
+                  transition-colors
+                "
+              >
+                <Send className="w-6 h-6" />
+              </motion.button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
