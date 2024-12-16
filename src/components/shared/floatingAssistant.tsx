@@ -1,6 +1,6 @@
 import React from 'react';
 import { Headset, HelpCircle } from 'lucide-react';
-import { THEMEASSISTICON } from '../styles/themes';
+import { THEMEASSISTICON } from '@/styles/themes';
 const FloatingAssistantButton: React.FC = () => {
   return (
     <button

@@ -7,11 +7,13 @@ import {
   ChartBar,
   Briefcase,
   ChevronRight,
-  ChevronDown
+  ChevronDown,
+  X,
+  Gauge
 } from 'lucide-react';
-import { THEMESIDEBAR } from '../styles/themes';
+import { THEMESIDEBAR } from '@/styles/themes';
 import { motion, AnimatePresence } from 'framer-motion';
-import avatar from "../utilities/images/avatars/avatar.jpg";
+import avatar from "@/utilities/images/avatars/avatar.jpg";
 import Image from 'next/image';
 
 interface MenuItemProps {
@@ -89,7 +91,7 @@ const Sidebar: React.FC<{
 }> = ({ isOpen = true, toggleSidebar }) => {
   const menuItems: MenuItemProps[] = [
     {
-      icon: Home,
+      icon: Gauge,
       label: 'Tableau de bord',
       subItems: [
         { label: 'Vue d\'ensemble' },
@@ -152,15 +154,15 @@ const Sidebar: React.FC<{
       `}
     >
       <div className="p-6">
-        {/*  <div className="flex justify-between items-center mb-4">
+
+        <div className="flex justify-between items-center mb-4 md:hidden">
 
           <button onClick={toggleSidebar} className="text-white">
-            ☰
+            <X />
           </button>
-        </div> */}
-
+        </div>
         <div className="flex flex-col items-center mb-10">
-          <div className="relative w-24 h-24 mb-6">
+          <div className="relative w-24 h-24 mb-4">
             <Image
               src={avatar}
               alt={`Thuran Junior`}
@@ -170,16 +172,18 @@ const Sidebar: React.FC<{
           </div>
 
 
+
           <div className="text-center w-full px-2">
-            <div className="font-bold">
+            <div className="text-sm font-bold">
               {`Thuran Junior`}
             </div>
-            <div className="text-sm text-gray-400 mt-0">
-              {`Junior.Kono@aglgroup.com`}
+            <div className="text-xs text-gray-400 mt-0">
+              {`E-Junior.Kono@aglgroup.com`}
             </div>
           </div>
 
         </div>
+
 
         <nav>
           <ul className="space-y-2">

@@ -1,7 +1,7 @@
 import React from 'react';
 import RootLayout from '../layouts/layout';
-import MainDashboard from '../components/mainDashboard';
-const Index: React.FC = () => {
+import MainDashboard from '../shared/mainDashboard';
+const Dashboard: React.FC = () => {
   return (
     <RootLayout>
       <MainDashboard />
@@ -9,4 +9,4 @@ const Index: React.FC = () => {
   );
 };
 
-export default Index;
+export default Dashboard;

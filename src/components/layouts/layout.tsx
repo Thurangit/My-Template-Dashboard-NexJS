@@ -2,10 +2,9 @@
 
 import React, { useState, useEffect } from 'react';
 import { Inter } from 'next/font/google';
-import Navbar from '../components/navBar';
-import Sidebar from '../components/sideBar';
-import FloatingAssistantButton from '../components/floatingAssistant';
-import '../globals.css';
+import Navbar from '../shared/navBar';
+import Sidebar from '../shared/sideBar';
+import FloatingAssistantButton from '../shared/floatingAssistant';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -32,8 +31,7 @@ export default function RootLayout({
   }, []);
 
   return (
-    <html lang="fr">
-      <body className={`${inter.className} flex h-screen bg-gray-100 overflow-hidden`}>
+      <div className={`${inter.className} flex h-screen bg-gray-100 overflow-hidden`}>
         <div className="flex w-full">
           {!isMobile && (
             <Sidebar 
@@ -71,7 +69,6 @@ export default function RootLayout({
           
           <FloatingAssistantButton />
         </div>
-      </body>
-    </html>
+      </div>
   );
 }
