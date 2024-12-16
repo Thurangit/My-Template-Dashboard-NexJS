@@ -15,6 +15,7 @@ import {
 import { AnimatePresence, motion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
+import avatar from "../utilities/images/avatars/avatar.jpg"
 
 const LANGUAGES = [
   { code: 'fr', name: 'Français', flag: '🇫🇷' },
@@ -96,7 +97,7 @@ const [currentLanguage, setCurrentLanguage] = useState(LANGUAGES[0]);
       <div className="space-y-4">
         <div className="flex items-center space-x-3 border-b pb-3">
           <Image 
-            src="/avatar.jpg" 
+            src={avatar}
             alt="Profile" 
             width={48}
             height={48}
@@ -237,7 +238,7 @@ const [currentLanguage, setCurrentLanguage] = useState(LANGUAGES[0]);
 
           <button onClick={() => setIsMobileMenuOpen(true)}>
             <Image 
-              src="/avatar.jpg" 
+              src={avatar}
               alt="Profile" 
               width={32}
               height={32}
@@ -405,7 +406,7 @@ const [currentLanguage, setCurrentLanguage] = useState(LANGUAGES[0]);
         {/* Profil */}
         <div className="flex items-center relative">
           <Image 
-            src="/avatar.jpg" 
+            src={avatar}
             alt="Profile" 
             width={40}
             height={40}

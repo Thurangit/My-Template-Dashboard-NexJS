@@ -9,7 +9,7 @@ import {
   ChevronRight, 
   ChevronDown 
 } from 'lucide-react';
-import { THEME } from '../styles/themes';
+import { THEMESIDEBAR } from '../styles/themes';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface MenuItemProps {
@@ -34,7 +34,7 @@ const MenuItem: React.FC<MenuItemProps> = ({ icon: Icon, label, subItems }) => {
         className="flex items-center justify-between hover:bg-blue-700 p-2 rounded cursor-pointer"
       >
         <div className="flex items-center space-x-3">
-          <Icon className={`w-5 h-5 ${THEME.sidebar.icon}`} />
+          <Icon className={`w-5 h-5 ${THEMESIDEBAR.sidebar.icon}`} />
           <span>{label}</span>
         </div>
         {subItems && (
@@ -136,8 +136,8 @@ const Sidebar: React.FC<{
   return (
     <aside 
       className={`
-        ${THEME.sidebar.background} 
-        ${THEME.sidebar.text} 
+        ${THEMESIDEBAR.sidebar.background} 
+        ${THEMESIDEBAR.sidebar.text} 
         w-64 
         h-full 
         fixed 
