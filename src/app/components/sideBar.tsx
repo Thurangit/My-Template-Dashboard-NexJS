@@ -1,16 +1,18 @@
 'use client';
 import React, { useState } from 'react';
-import { 
-  Home, 
-  Settings, 
-  Users, 
-  ChartBar, 
-  Briefcase, 
-  ChevronRight, 
-  ChevronDown 
+import {
+  Home,
+  Settings,
+  Users,
+  ChartBar,
+  Briefcase,
+  ChevronRight,
+  ChevronDown
 } from 'lucide-react';
 import { THEMESIDEBAR } from '../styles/themes';
 import { motion, AnimatePresence } from 'framer-motion';
+import avatar from "../utilities/images/avatars/avatar.jpg";
+import Image from 'next/image';
 
 interface MenuItemProps {
   icon: React.ElementType;
@@ -29,8 +31,8 @@ const MenuItem: React.FC<MenuItemProps> = ({ icon: Icon, label, subItems }) => {
 
   return (
     <div>
-      <div 
-        onClick={handleToggle} 
+      <div
+        onClick={handleToggle}
         className="flex items-center justify-between hover:bg-blue-700 p-2 rounded cursor-pointer"
       >
         <div className="flex items-center space-x-3">
@@ -41,24 +43,24 @@ const MenuItem: React.FC<MenuItemProps> = ({ icon: Icon, label, subItems }) => {
           isOpen ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />
         )}
       </div>
-      
+
       {subItems && (
         <AnimatePresence>
           {isOpen && (
             <motion.div
               initial={{ opacity: 0, height: 0 }}
-              animate={{ 
-                opacity: 1, 
+              animate={{
+                opacity: 1,
                 height: 'auto',
-                transition: { 
+                transition: {
                   duration: 0.3,
                   ease: "easeInOut"
                 }
               }}
-              exit={{ 
-                opacity: 0, 
+              exit={{
+                opacity: 0,
                 height: 0,
-                transition: { 
+                transition: {
                   duration: 0.2,
                   ease: "easeInOut"
                 }
@@ -66,8 +68,8 @@ const MenuItem: React.FC<MenuItemProps> = ({ icon: Icon, label, subItems }) => {
               className="pl-10 space-y-2 mt-2"
             >
               {subItems.map((subItem, index) => (
-                <div 
-                  key={index} 
+                <div
+                  key={index}
                   className="hover:bg-blue-600 p-2 rounded"
                 >
                   {subItem.label}
@@ -86,8 +88,8 @@ const Sidebar: React.FC<{
   toggleSidebar: () => void;
 }> = ({ isOpen = true, toggleSidebar }) => {
   const menuItems: MenuItemProps[] = [
-    { 
-      icon: Home, 
+    {
+      icon: Home,
       label: 'Tableau de bord',
       subItems: [
         { label: 'Vue d\'ensemble' },
@@ -95,8 +97,8 @@ const Sidebar: React.FC<{
         { label: 'Rapports' }
       ]
     },
-    { 
-      icon: Users, 
+    {
+      icon: Users,
       label: 'Utilisateurs',
       subItems: [
         { label: 'Liste des utilisateurs' },
@@ -104,8 +106,8 @@ const Sidebar: React.FC<{
         { label: 'Permissions' }
       ]
     },
-    { 
-      icon: ChartBar, 
+    {
+      icon: ChartBar,
       label: 'Analytics',
       subItems: [
         { label: 'Performance' },
@@ -113,8 +115,8 @@ const Sidebar: React.FC<{
         { label: 'Prévisions' }
       ]
     },
-    { 
-      icon: Briefcase, 
+    {
+      icon: Briefcase,
       label: 'Projets',
       subItems: [
         { label: 'Projets en cours' },
@@ -122,8 +124,8 @@ const Sidebar: React.FC<{
         { label: 'Nouveau projet' }
       ]
     },
-    { 
-      icon: Settings, 
+    {
+      icon: Settings,
       label: 'Paramètres',
       subItems: [
         { label: 'Compte' },
@@ -134,7 +136,7 @@ const Sidebar: React.FC<{
   ];
 
   return (
-    <aside 
+    <aside
       className={`
         ${THEMESIDEBAR.sidebar.background} 
         ${THEMESIDEBAR.sidebar.text} 
@@ -150,17 +152,35 @@ const Sidebar: React.FC<{
       `}
     >
       <div className="p-6">
-        <div className="flex justify-between items-center mb-8">
-          <img 
-            src="/logo.png" 
-            alt="Logo" 
-            className="h-10"
-          />
+        {/*  <div className="flex justify-between items-center mb-4">
+
           <button onClick={toggleSidebar} className="text-white">
             ☰
           </button>
+        </div> */}
+
+        <div className="flex flex-col items-center mb-10">
+          <div className="relative w-24 h-24 mb-6">
+            <Image
+              src={avatar}
+              alt={`Thuran Junior`}
+              className="w-full h-full rounded-full object-cover"
+            />
+            <div className="absolute bottom-2 right-0 w-4 h-4 bg-green-500 rounded-full border-2 border-white"></div>
+          </div>
+
+
+          <div className="text-center w-full px-2">
+            <div className="font-bold">
+              {`Thuran Junior`}
+            </div>
+            <div className="text-sm text-gray-400 mt-0">
+              {`Junior.Kono@aglgroup.com`}
+            </div>
+          </div>
+
         </div>
-        
+
         <nav>
           <ul className="space-y-2">
             {menuItems.map((item, index) => (
