@@ -1,0 +1,29 @@
+{
+    "locale": "en",
+    "menu1": "Dashboard",
+    "menu1_submenu1": "Overview",
+    "menu1_submenu2": "Statistics",
+    "menu1_submenu3": "Reports",
+    "menu2": "Users",
+    "menu2_submenu1": "User list",
+    "menu2_submenu2": "Role management",
+    "menu2_submenu3": "Permissions",
+    "menu3": "Analytics",
+    "menu3_submenu1": "Performance",
+    "menu3_submenu2": "Trends",
+    "menu3_submenu3": "Forecasts",
+    "menu4": "Projects",
+    "menu4_submenu1": "Projects in progress",
+    "menu4_submenu2": "History",
+    "menu4_submenu3": "New project",
+    "menu5": "Parameters",
+    "menu5_submenu1": "Account",
+    "menu5_submenu2": "Preferences",
+    "menu5_submenu3": "Integrations",
+    "menu6": "Component",
+    "menu6_submenu1": "Request",
+    "menu6_submenu2": "Power BI",
+    "menu6_submenu3": "Maps"
+    
+   
+  }

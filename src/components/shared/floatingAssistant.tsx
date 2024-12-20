@@ -1,7 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Headset, Send, ArrowUp } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-
+import logo from "@/utilities/images/logos/logo_AGL_rgb_Blue.png"
+import Image from 'next/image';
+import { THEMES } from './themes';
+import { useOrganizationStore } from './storeoftheme';
 // Message type for type safety
 interface Message {
   id: number;
@@ -10,12 +13,17 @@ interface Message {
   timestamp: Date;
 }
 
+
+const code_societe = "agl";
+
 const FloatingAssistantButton: React.FC = () => {
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputMessage, setInputMessage] = useState('');
   const chatContainerRef = useRef<HTMLDivElement>(null);
 
+  const { currentOrganization, getCurrentTheme } = useOrganizationStore();
+  const theme = getCurrentTheme();
   const toggleChat = () => {
     setIsChatOpen(!isChatOpen);
   };
@@ -38,7 +46,8 @@ const FloatingAssistantButton: React.FC = () => {
     setTimeout(() => {
       const assistantResponse: Message = {
         id: Date.now() + 1,
-        text: `Vous avez dit : "${inputMessage}". Je suis une réponse de placeholder !`,
+        //text: `Vous avez dit : "${inputMessage}".`,
+        text: "Nous avons compris vote message notre AI arrive bientôt! En attendant pour tout besoin d'assistance faite une demande Ascens Care.",
         sender: 'assistant',
         timestamp: new Date()
       };
@@ -66,16 +75,16 @@ const FloatingAssistantButton: React.FC = () => {
     return (
       <motion.div
         key={message.id}
-        initial={{ opacity: 0, scale: 0.9 }}
+        initial={{ opacity: 0, scale: 0.8 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.2 }}
         className={`flex mb-4 relative ${isUser ? 'justify-end' : 'pl-14'}`}
       >
         {!isUser && (
           <div className="absolute left-0 top-0 w-12 h-12">
-            <img
-              src="/api/placeholder/48/48"
-              alt="AI Assistant"
+            <Image
+              src={logo}
+              alt="Assistant"
               className="w-12 h-12 rounded-full object-cover"
             />
           </div>
@@ -102,7 +111,9 @@ const FloatingAssistantButton: React.FC = () => {
         whileTap={{ scale: 0.95 }}
         onClick={toggleChat}
         className={`
-          bg-indigo-800 
+        
+        ${theme.assistIcon.background}
+     
           text-white rounded-full w-16 h-16 
           flex items-center justify-center 
           shadow-2xl hover:bg-indigo-900 
@@ -137,14 +148,15 @@ const FloatingAssistantButton: React.FC = () => {
           >
             {/* Chat Header */}
             <div
-              className="
-                bg-indigo-800/80 text-white 
+              className={`
+              ${theme.assistIcon.background} 
+                text-white 
                 p-4 rounded-t-xl 
                 flex justify-between items-center
                 backdrop-blur-sm
-              "
+                `}
             >
-              <h2 className="font-bold">Assistant IA</h2>
+              <h2 className="font-bold">Assistant AGL</h2>
               <motion.button
                 whileHover={{ rotate: 180 }}
                 onClick={toggleChat}
@@ -202,12 +214,13 @@ const FloatingAssistantButton: React.FC = () => {
               <motion.button
                 whileTap={{ scale: 0.9 }}
                 onClick={sendMessage}
-                className="
-                  bg-indigo-700/80 text-white 
+                className={`
+                ${theme.assistIcon.background} 
+                  text-white 
                   p-2 rounded-full 
                   hover:bg-indigo-800/80
                   transition-colors
-                "
+                  `}
               >
                 <Send className="w-6 h-6" />
               </motion.button>

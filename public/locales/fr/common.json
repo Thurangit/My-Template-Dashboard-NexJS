@@ -1,0 +1,28 @@
+{
+    "locale": "fr",
+    "menu1": "Tableau de bord",
+    "menu1_submenu1": "Vue d'ensemble",
+    "menu1_submenu2": "Statistiques",
+    "menu1_submenu3": "Rapports",
+    "menu2": "Utilisateurs",
+    "menu2_submenu1": "Liste des utilisateurs",
+    "menu2_submenu2": "Gestion des rôles",
+    "menu2_submenu3": "Permissions",
+    "menu3": "Analyse",
+    "menu3_submenu1": "Performance",
+    "menu3_submenu2": "Tendances",
+    "menu3_submenu3": "Prévisions",
+    "menu4": "Projets",
+    "menu4_submenu1": "Projets en cours",
+    "menu4_submenu2": "Historique",
+    "menu4_submenu3": "Nouveau projet",
+    "menu5": "Paramètres",
+    "menu5_submenu1": "Compte",
+    "menu5_submenu2": "Préférences",
+    "menu5_submenu3": "Intégrations",
+    "menu6": "Composants",
+    "menu6_submenu1": "demande",
+    "menu6_submenu2": "reporting",
+    "menu6_submenu3": "carte"
+   
+  }

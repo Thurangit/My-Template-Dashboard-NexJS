@@ -1,0 +1,38 @@
+export const hasPrivilege = (privileges: any, label: string) => !privileges.some((privilege: any) => privilege.label === label);
+
+export const generatePrivileges = (getAllPrivileges: any) => {
+  return {
+    donneesdebases: hasPrivilege(getAllPrivileges, "donneesdebases.aucun"),
+    section: hasPrivilege(getAllPrivileges, "donneesdebases.organisation.sections.aucun"),
+    paiement: hasPrivilege(getAllPrivileges, "donneesdebases.paiements.aucun"),
+    importation: hasPrivilege(getAllPrivileges, "donneesdebases.importations.aucun"),
+    tarifs: hasPrivilege(getAllPrivileges, "tarifs.aucun"),
+    grilleTarifaire: hasPrivilege(getAllPrivileges, "tarifs.grilletarifaire.aucun"),
+    parametrages: hasPrivilege(getAllPrivileges, "tarifs.parametrages.aucun"),
+    rubriquesrejetees: hasPrivilege(getAllPrivileges, "tarifs.rubriquesrejetees.aucun"),
+    workflow: hasPrivilege(getAllPrivileges, "workflow.aucun"),
+    delegations: hasPrivilege(getAllPrivileges, "workflow.delegations.aucun"),
+    etat: hasPrivilege(getAllPrivileges, "workflow.etat.aucun"),
+    transitions: hasPrivilege(getAllPrivileges, "workflow.transitions.aucun"),
+    services: hasPrivilege(getAllPrivileges, "donneesdebases.organisation.services.aucun"),
+    banque: hasPrivilege(getAllPrivileges, "donneesdebases.paiements.banques.aucun"),
+    caisse: hasPrivilege(getAllPrivileges, "donneesdebases.paiements.caisses.aucun"),
+    depenses: hasPrivilege(getAllPrivileges, "donneesdebases.paiements.depenses.aucun"),
+    justificatifs: hasPrivilege(getAllPrivileges, "donneesdebases.paiements.justificatifs.aucun"),
+    avoirs: hasPrivilege(getAllPrivileges, "donneesdebases.importations.avoirs.aucun"),
+    billoflading: hasPrivilege(getAllPrivileges, "donneesdebases.importations.billoflading.aucun"),
+    conteneurs: hasPrivilege(getAllPrivileges, "donneesdebases.importations.conteneurs.aucun"),
+    dossierspot: hasPrivilege(getAllPrivileges, "donneesdebases.importations.dossierspot.aucun"),
+    facturesachats: hasPrivilege(getAllPrivileges, "donneesdebases.importations.facturesachats.aucun"),
+    facturesventes: hasPrivilege(getAllPrivileges, "donneesdebases.importations.facturesventes.aucun"),
+    margesbrutes: hasPrivilege(getAllPrivileges, "donneesdebases.importations.margesbrutes.aucun"),
+    rubriquespot: hasPrivilege(getAllPrivileges, "donneesdebases.importations.rubriquespot.aucun"),
+    administration: hasPrivilege(getAllPrivileges, "administration.aucun"),
+    beneficiairesexternes: hasPrivilege(getAllPrivileges, "administration.beneficiairesexternes.aucun"),
+    role: hasPrivilege(getAllPrivileges, "administration.role.aucun"),
+    utilisateurs: hasPrivilege(getAllPrivileges, "administration.utilisateurs.aucun"),
+    gestiondespieces: hasPrivilege(getAllPrivileges, "gestiondespieces.aucun"),
+    piece: hasPrivilege(getAllPrivileges, "gestiondespieces.pieces.aucun"),
+    suivi_pieces: hasPrivilege(getAllPrivileges, "gestiondespieces.suividespieces.aucun"),
+  };
+};

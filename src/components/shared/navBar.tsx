@@ -1,508 +1,65 @@
-// 'use client';
-// import React, { useState, useEffect } from 'react';
-// import { 
-//   Bell, 
-//   Search, 
-//   Menu, 
-//   X, 
-//   User, 
-//   Settings, 
-//   LogOut, 
-//   ChevronUp,
-//   ChevronDown,
-//   Globe
-// } from 'lucide-react';
-// import { AnimatePresence, motion } from 'framer-motion';
-// import Image from 'next/image';
-// import Link from 'next/link';
-// import logo from "@/utilities/images/logos/logo_AGL_rgb_Blue.png"
-
-// const LANGUAGES = [
-//   { code: 'fr', name: 'Français', flag: '🇫🇷' },
-//   { code: 'en', name: 'English', flag: '🇬🇧' },
-//   { code: 'es', name: 'Español', flag: '🇪🇸' },
-//   { code: 'de', name: 'Deutsch', flag: '🇩🇪' }
-// ];
-// // Language Option Type
-// interface LanguageOption {
-//   code: string;
-//   name: string;
-//   flag: string;
-// }
-
-// interface NavbarProps {
-//   toggleSidebar: () => void;
-//   isMobile?: boolean;
-// }
-
-// const Navbar: React.FC<NavbarProps> = ({ toggleSidebar, isMobile = false }) => {
-//   const [isSearchOpen, setIsSearchOpen] = useState(false);
-//   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
-//   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-//   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-//   const [isLanguageDropdownOpen, setIsLanguageDropdownOpen] = useState(false);
-//    const [isLanguageOpen, setIsLanguageOpen] = useState(false);
- 
-// const [currentLanguage, setCurrentLanguage] = useState(LANGUAGES[0]);
-
-//   // Language Options
-//   const languageOptions: LanguageOption[] = [
-//     { code: 'en', name: 'English', flag: '🇺🇸' },
-//     { code: 'fr', name: 'Français', flag: '🇫🇷' },
-//     { code: 'es', name: 'Español', flag: '🇪🇸' }
-//   ];
- 
-//   const notifications = [
-//     { title: 'Nouvelle tâche assignée', date: '2024-02-15', time: '14:30' },
-//     { title: 'Réunion à venir', date: '2024-02-16', time: '10:00' },
-//     { title: 'Rapport terminé', date: '2024-02-14', time: '16:45' }
-//   ];
-
-//   // Composant de menu mobile et desktop
-//   const ProfileDropdownMenu = () => (
-//     <div className="absolute right-4 top-16 bg-white shadow-lg rounded-lg p-2 w-48">
-//       <ul className="space-y-2">
-//         <Link href="/profile" className="block px-4 py-2 hover:bg-gray-100 flex items-center">
-//           <User className="w-5 h-5 mr-2" />
-//           <span>Profil</span>
-//         </Link>
-//         <Link href="/settings" className="block px-4 py-2 hover:bg-gray-100 flex items-center">
-//           <Settings className="w-5 h-5 mr-2" />
-//           <span>Paramètres</span>
-//         </Link>
-//         <button className="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center">
-//           <LogOut className="w-5 h-5 mr-2" />
-//           <span>Déconnexion</span>
-//         </button>
-//       </ul>
-//     </div>
-//   );
-
-//   // Composant de menu mobile
-//   const MobileMenu = () => (
-//     <motion.div
-//       initial={{ x: '100%' }}
-//       animate={{ x: 0 }}
-//       exit={{ x: '100%' }}
-//       transition={{ type: 'tween' }}
-//       className="fixed top-0 right-0 w-full h-full bg-white z-60 p-6 overflow-y-auto"
-//     >
-//       <div className="flex justify-between items-center mb-6">
-//         <h2 className="text-2xl font-bold">Menu</h2>
-//         <button onClick={() => setIsMobileMenuOpen(false)}>
-//           <X className="w-6 h-6" />
-//         </button>
-//       </div>
-
-//       <div className="space-y-4">
-//         <div className="flex items-center space-x-3 border-b pb-3">
-//           <Image 
-//             src={logo}
-//             alt="Profile" 
-//             width={48}
-//             height={48}
-//             className="rounded-full"
-//           />
-//           <div>
-//             <h3 className="font-semibold">Nom Utilisateur</h3>
-//             <p className="text-sm text-gray-500">email@exemple.com</p>
-//           </div>
-//         </div>
-
-//          <div className="relative">
-//           <button  onClick={() => setIsLanguageOpen(!isLanguageOpen)} >
-//             <div className="relative">
-//               <Globe className="text-gray-600" />
-//               <span className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full text-xs w-4 h-4 flex items-center justify-center">
-//                {currentLanguage.flag} 
-//               </span>
-//             </div>
-//           </button>
-//         </div>
-
-//         {/* Language Selector */}
-//         <div className="space-y-4">
-//         {/*   <button 
-//             onClick={() => setIsLanguageOpen(!isLanguageOpen)} 
-//             className="flex items-center space-x-2 hover:bg-gray-100 p-2 rounded-lg transition"
-//           >
-//             <Globe className="text-gray-600" />
-//             <span className="hidden md:inline">{currentLanguage.flag} {currentLanguage.name}</span>
-//           < /button>*/}
-
-//           <AnimatePresence>
-//             {isLanguageOpen && (
-//               <motion.div
-//                 initial={{ opacity: 0, y: -10 }}
-//                 animate={{ opacity: 1, y: 0 }}
-//                 exit={{ opacity: 0, y: -10 }}
-//                 transition={{ duration: 0.2 }}
-//                 className="absolute right-0 top-full mt-2 bg-white shadow-lg rounded-lg border w-56 z-50"
-//               >
-//                 <ul className="py-1">
-//                   {LANGUAGES.map((language) => (
-//                     <li 
-//                       key={language.code}
-//                       onClick={() => handleLanguageChange(language)}
-//                       className={`
-//                         flex items-center space-x-3 px-4 py-2 
-//                         hover:bg-gray-100 cursor-pointer 
-//                         ${currentLanguage.code === language.code ? 'bg-blue-50' : ''}
-//                       `}
-//                     >
-//                       <span className="text-xl">{language.flag}</span>
-//                       <span>{language.name}</span>
-//                       {currentLanguage.code === language.code && (
-//                         <span className="ml-auto text-blue-500">✓</span>
-//                       )}
-//                     </li>
-//                   ))}
-//                 </ul>
-//               </motion.div>
-//             )}
-//           </AnimatePresence>
-//         </div>
-
-//         <nav>
-//           <ul className="space-y-4">
-//             {[
-//               { icon: User, label: 'Profil', href: '/profile' },
-//               { icon: Settings, label: 'Paramètres', href: '/settings' },
-//               { icon: LogOut, label: 'Déconnexion', href: '/logout' }
-//             ].map(({ icon: Icon, label, href }, index) => (
-//               <li 
-//                 key={index} 
-//                 className="flex items-center space-x-3 p-2 hover:bg-gray-100 rounded"
-//               >
-//                 <Icon className="w-5 h-5" />
-//                 <span>{label}</span>
-//               </li>
-//             ))}
-//           </ul>
-//         </nav>
-//       </div>
-//     </motion.div>
-//   );
-
-//   // Composant de notifications mobile
-//   const MobileNotifications = () => (
-//     <motion.div
-//       initial={{ x: '100%' }}
-//       animate={{ x: 0 }}
-//       exit={{ x: '100%' }}
-//       transition={{ type: 'tween' }}
-//       className="fixed top-0 right-0 w-full h-full bg-white z-60 p-6 overflow-y-auto"
-//     >
-//       <div className="flex justify-between items-center mb-6">
-//         <h2 className="text-2xl font-bold">Notifications</h2>
-//         <button onClick={() => setIsNotificationsOpen(false)}>
-//           <X className="w-6 h-6" />
-//         </button>
-//       </div>
-
-//       {notifications.map((notification, index) => (
-//         <div 
-//           key={index} 
-//           className="border-b py-4 hover:bg-gray-100"
-//         >
-//           <h3 className="font-semibold">{notification.title}</h3>
-//           <p className="text-sm text-gray-500">
-//             {notification.date} à {notification.time}
-//           </p>
-//         </div>
-//       ))}
-//     </motion.div>
-//   );
-
-//   // Navbar pour mobile
-//   if (isMobile) {
-//     return (
-//       <nav className="bg-white shadow-md p-4 flex justify-between items-center">
-//         <button onClick={toggleSidebar}>
-//           <Menu className="w-6 h-6" />
-//         </button>
-
-//         <div className="flex items-center space-x-4">
-//           <div className="relative">
-//             <button onClick={() => setIsSearchOpen(true)}>
-//               <Search className="w-5 h-5" />
-//             </button>
-//           </div>
-
-//           <button onClick={() => setIsNotificationsOpen(true)} className="relative">
-//             <Bell className="w-5 h-5" />
-//             <span className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full text-xs w-4 h-4 flex items-center justify-center">
-//               {notifications.length}
-//             </span>
-//           </button>
-
-//           <button onClick={() => setIsMobileMenuOpen(true)}>
-//             <Image 
-//               src={logo}
-//               alt="Profile" 
-//               width={32}
-//               height={32}
-//               className="rounded-full"
-//             />
-//           </button>
-//         </div>
-
-//         {/* Modals pour mobile */}
-//         <AnimatePresence>
-//           {isSearchOpen && (
-//             <motion.div 
-//               initial={{ opacity: 0 }}
-//               animate={{ opacity: 1 }}
-//               exit={{ opacity: 0 }}
-//               className="fixed top-0 left-0 w-full bg-white p-4 z-50 flex items-center"
-//             >
-//               <div 
-//                 className="
-//                   flex items-center 
-//                   transition-all duration-300 
-//                   w-full
-//                   bg-gray-100 
-//                   rounded-full 
-//                   overflow-hidden
-//                 "
-//               >
-//                 <Search className="h-5 w-5 m-2 text-gray-600" />
-//                 <input 
-//                   type="text" 
-//                   placeholder="Rechercher..." 
-//                   className="
-//                     w-full 
-//                     bg-transparent 
-//                     outline-none 
-//                     px-2 
-//                     py-1
-//                     text-gray-800
-//                   "
-//                 />
-//                 <button onClick={() => setIsSearchOpen(false)} className="mr-2">
-//                   <X className="w-5 h-5" />
-//                 </button>
-//               </div>
-//             </motion.div>
-//           )}
-          
-//           {isMobileMenuOpen && <MobileMenu />}
-//           {isNotificationsOpen && <MobileNotifications />}
-//         </AnimatePresence>
-//       </nav>
-//     );
-//   }
-//     const handleLanguageChange = (language: any) => {
-//     setCurrentLanguage(language);
-//     setIsLanguageOpen(false);
-//   };
-
-//   // Navbar pour desktop
-//   return (
-//       <nav className="bg-white shadow-md p-4 flex justify-between items-center relative">
-//       <div className="flex items-center">
-//         <button onClick={toggleSidebar} className="mr-4">
-//           <span className="text-xl font-bold">☰</span>
-//         </button>
-//       </div>
-      
-//       <div className="flex items-center space-x-4">
-//         {/* Recherche */}
-//         <div className="relative">
-//           {isSearchOpen ? (
-//             <motion.div
-//               initial={{ width: 0, opacity: 0 }}
-//               animate={{ width: 'auto', opacity: 1 }}
-//               exit={{ width: 0, opacity: 0 }}
-//               transition={{ duration: 0.3 }}
-//               className="
-//                 flex items-center 
-//                 bg-gray-100 
-//                 rounded-full 
-//                 overflow-hidden
-//               "
-//             >
-//               <Search className="h-5 w-5 m-2 text-gray-600" />
-//               <input 
-//                 type="text" 
-//                 placeholder="Rechercher..." 
-//                 className="
-//                   w-full 
-//                   bg-transparent 
-//                   outline-none 
-//                   px-2 
-//                   py-1
-//                   text-gray-800
-//                 "
-//               />
-//               <button onClick={() => setIsSearchOpen(false)} className="mr-2">
-//                 <X className="text-gray-600" />
-//               </button>
-//             </motion.div>
-//           ) : (
-//             <button onClick={() => setIsSearchOpen(true)}>
-//               <Search className="text-gray-600" />
-//             </button>
-//           )}
-//         </div>
-        
-//         {/* Notifications */}
-//         <div className="relative">
-//           <button onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}>
-//             <div className="relative">
-//               <Bell className="text-gray-600" />
-//               <span className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full text-xs w-4 h-4 flex items-center justify-center">
-//                 {notifications.length}
-//               </span>
-//             </div>
-//           </button>
-//         </div>
-//         <div className="relative">
-//           <button  onClick={() => setIsLanguageOpen(!isLanguageOpen)} >
-//             <div className="relative">
-//               <Globe className="text-gray-600" />
-             
-//             </div>
-//           </button>
-//         </div>
-        
-//         {/* Language Selector */}
-//         <div className="relative">
-       
-
-//           <AnimatePresence>
-//             {isLanguageOpen && (
-//               <motion.div
-//                 initial={{ opacity: 0, y: -10 }}
-//                 animate={{ opacity: 1, y: 0 }}
-//                 exit={{ opacity: 0, y: -10 }}
-//                 transition={{ duration: 0.2 }}
-//                 className="absolute right-0 top-full mt-2 bg-white shadow-lg rounded-lg border w-56 z-50"
-//               >
-//                 <ul className="py-1">
-//                   {LANGUAGES.map((language) => (
-//                     <li 
-//                       key={language.code}
-//                       onClick={() => handleLanguageChange(language)}
-//                       className={`
-//                         flex items-center space-x-3 px-4 py-2 
-//                         hover:bg-gray-100 cursor-pointer 
-//                         ${currentLanguage.code === language.code ? 'bg-blue-50' : ''}
-//                       `}
-//                     >
-//                       <span className="text-xl">{language.flag}</span>
-//                       <span>{language.name}</span>
-//                       {currentLanguage.code === language.code && (
-//                         <span className="ml-auto text-blue-500">✓</span>
-//                       )}
-//                     </li>
-//                   ))}
-//                 </ul>
-//               </motion.div>
-//             )}
-//           </AnimatePresence>
-//         </div>
-        
-//         {/* Profil */}
-//         <div className="flex items-center relative">
-//           <Image 
-//             src={logo}
-//             alt="Profile" 
-//             width={40}
-//             height={40}
-//             className="rounded-full mr-2"
-//           />
-//           <button onClick={() => setIsDropdownOpen(!isDropdownOpen)}>
-//             {isDropdownOpen ? <ChevronUp /> : <ChevronDown />}
-//           </button>
-          
-//           {isDropdownOpen && <ProfileDropdownMenu />}
-//         </div>
-//       </div>
-
-
-//       {/* Off-canvas Notifications */}
-//       <AnimatePresence>
-//         {isNotificationsOpen && (
-//           <motion.div
-//             initial={{ x: '100%' }}
-//             animate={{ x: 0 }}
-//             exit={{ x: '100%' }}
-//             transition={{ type: 'tween' }}
-//             className="fixed top-0 right-0 w-80 h-full bg-white shadow-lg z-50 p-6 overflow-y-auto"
-//           >
-//             <div className="flex justify-between items-center mb-4">
-//               <h2 className="text-xl font-bold">Notifications</h2>
-//               <button onClick={() => setIsNotificationsOpen(false)}>
-//                 <X className="text-gray-600" />
-//               </button>
-//             </div>
-//             {notifications.map((notification, index) => (
-//               <div 
-//                 key={index} 
-//                 className="border-b py-3 hover:bg-gray-100 transition"
-//               >
-//                 <h3 className="font-semibold">{notification.title}</h3>
-//                 <p className="text-sm text-gray-500">
-//                   {notification.date} à {notification.time}
-//                 </p>
-//               </div>
-//             ))}
-//           </motion.div>
-//         )}
-//       </AnimatePresence>
-//     </nav>
-//   );
-// };
-
-// export default Navbar;
 'use client';
-import React, { useState, useEffect } from 'react';
-import { 
-  Bell, 
-  Search, 
-  Menu, 
-  X, 
-  User, 
-  Settings, 
-  LogOut, 
+
+import React, { useState, useRef, useEffect } from 'react';
+import {
+  Bell,
+  Search,
+  Menu,
+  X,
+  User,
+  Settings,
+  LogOut,
   ChevronUp,
   ChevronDown,
   Globe,
-  Lock // Ajout de l'icône de verrouillage
+  Lock,
+  AlignJustify,
+  PanelLeft, // Nouvel icône pour l'animation de sidebar
+  PanelsTopLeft,
+  ChevronLeftCircleIcon
 } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useTranslation } from 'next-i18next';
 import logo from "@/utilities/images/logos/logo_AGL_rgb_Blue.png"
+import logoSCP from "@/utilities/images/logos/logoScpao.jpg"
+import { THEMES } from './themes';
+import { useOrganizationStore } from './storeoftheme';
+import { useRouter } from 'next/router';
 
 const LANGUAGES = [
   { code: 'fr', name: 'Français', flag: '🇫🇷' },
   { code: 'en', name: 'English', flag: '🇬🇧' },
-  { code: 'es', name: 'Español', flag: '🇪🇸' },
-  { code: 'de', name: 'Deutsch', flag: '🇩🇪' }
+  // { code: 'es', name: 'Español', flag: '🇪🇸' },
+  // { code: 'de', name: 'Deutsch', flag: '🇩🇪' }
 ];
 
-// Type pour les options de langue
 interface LanguageOption {
   code: string;
   name: string;
   flag: string;
 }
 
-// Type pour les organisations
-interface Organization {
-  id: string;
-  name: string;
-  logo: string;
-}
+
 
 interface NavbarProps {
   toggleSidebar: () => void;
   isMobile?: boolean;
+  isSidebarOpen?: boolean;
 }
 
-const Navbar: React.FC<NavbarProps> = ({ toggleSidebar, isMobile = false }) => {
+interface Organization {
+  id: any;
+  name: any;
+  code: any;  // Explicitly define the allowed values
+  logo?: any;
+}
+
+const Navbar: React.FC<NavbarProps> = ({
+  toggleSidebar,
+  isMobile = false,
+}) => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -510,107 +67,172 @@ const Navbar: React.FC<NavbarProps> = ({ toggleSidebar, isMobile = false }) => {
   const [isLanguageDropdownOpen, setIsLanguageDropdownOpen] = useState(false);
   const [isLanguageOpen, setIsLanguageOpen] = useState(false);
   const [currentLanguage, setCurrentLanguage] = useState(LANGUAGES[0]);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const { currentOrganization, getCurrentTheme } = useOrganizationStore();
+  const theme = getCurrentTheme();
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const { i18n } = useTranslation();
+  const router = useRouter();
 
-  // Liste des organisations (à remplacer par vos vraies données)
+  // Synchroniser l'état local avec la langue active
+  useEffect(() => {
+    const activeLanguage = LANGUAGES.find(
+      (language) => language.code === i18n.language
+    );
+    if (activeLanguage) {
+      setCurrentLanguage(activeLanguage);
+    }
+  }, [i18n.language]);
+ 
+  // const changeLanguage = (lng: string) => {
+  //   i18n.changeLanguage(lng);
+  //   const selectedLanguage = LANGUAGES.find((lang) => lang.code === lng);
+  //   console.log('langage',selectedLanguage)
+   
+  //   if (selectedLanguage) {
+  //     setCurrentLanguage(selectedLanguage);
+  //   }
+  // }
+  const changeLanguage = (lng: string) => {
+    const currentPath = router.asPath === '/' ? `/${i18n.language}` : router.asPath;
+    const newPath = currentPath.replace(`/${i18n.language}`, `/${lng}`);
+    i18n.changeLanguage(lng);
+    router.push(newPath);
+  };
+  const toggleSidebarMotion = () => {
+    setIsSidebarOpen(prevState => !prevState);
+  };
+  // Liste des organisations
   const organizations: Organization[] = [
-    { 
-      id: '1', 
-      name: 'AGL Entreprise', 
-      logo: "" 
+    {
+      id: '1',
+      name: 'AGL Group',
+      code: 'agl',  // Now must be one of the defined values
+      logo: logo,
     },
-    { 
-      id: '2', 
-      name: 'Autre Entreprise', 
-      logo: "" 
+    {
+      id: '2',
+      name: 'SCP',
+      code: 'scp',  // Now must be one of the defined values
+      logo: logoSCP
     }
   ];
 
+  // Fermeture du dropdown si on clique en dehors
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
   const notifications = [
-    { title: 'Nouvelle tâche assignée', date: '2024-02-15', time: '14:30' },
-    { title: 'Réunion à venir', date: '2024-02-16', time: '10:00' },
-    { title: 'Rapport terminé', date: '2024-02-14', time: '16:45' }
+    { title: 'Nouvelle tâche assignée', date: '2024-02-15', time: '14:30', isOpen: false },
+    { title: 'Réunion à venir', date: '2024-02-16', time: '10:00', isOpen: false },
+    { title: 'Rapport terminé', date: '2024-02-14', time: '16:45', isOpen: false }
   ];
 
-  // Menu des organisations pour mobile
-  const MobileOrganizationMenu = () => (
+
+
+  const { setCurrentOrganization } = useOrganizationStore();
+
+  const handleOrganizationSelect = (org: {
+    id: string;
+    name: string;
+    code: keyof typeof THEMES;
+    logo?: string;
+  }) => {
+    // Ensure the organization code is valid
+    if (THEMES[org.code]) {
+      setCurrentOrganization(org);
+      // Additional logic like closing dropdown can be added here
+    } else {
+      console.error(`Invalid organization code: ${org.code}`);
+    }
+  };
+
+  // Menu des organisations pour desktop
+  const OrganizationDropdown = () => (
     <motion.div
-      initial={{ x: '100%' }}
-      animate={{ x: 0 }}
-      exit={{ x: '100%' }}
-      transition={{ type: 'tween' }}
-      className="fixed top-0 right-0 w-full h-full bg-white z-60 p-6 overflow-y-auto"
+      ref={dropdownRef}
+      initial={{ opacity: 0, y: -10 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -10 }}
+      transition={{ duration: 0.2 }}
+      className={`
+      ${isMobile
+          ? 'fixed top-0 right-0 w-full h-full bg-white z-[100] p-6 overflow-y-auto'
+          : 'absolute right-0 top-full mt-2 bg-white shadow-lg rounded-lg border w-64 z-[100]'
+        }
+    `}
     >
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold">Organisations</h2>
-        <button onClick={() => setIsMobileMenuOpen(false)}>
-          <X className="w-6 h-6" />
-        </button>
+      <div className="px-4 py-2 border-b">
+        <h3 className="font-semibold text-gray-700">Organisations</h3>
       </div>
 
-      <div className="space-y-4">
-        {/* Liste des organisations */}
-        <div className="space-y-4">
-          {organizations.map((org) => (
-            <div 
-              key={org.id} 
-              className="flex items-center space-x-3 border-b pb-3 cursor-pointer hover:bg-gray-100 p-2 rounded"
-            >
-              <Image 
-                src={org.logo}
-                alt={`Logo ${org.name}`} 
-                width={48}
-                height={48}
-                className="rounded"
-              />
-              <div>
-                <h3 className="font-semibold">{org.name}</h3>
-              </div>
-            </div>
-          ))}
-        </div>
+      <div className="py-2">
+        {organizations.map((org) => (
+          <div
+            key={org.id}
+            className="
+              px-4 py-2 
+              hover:bg-gray-100 
+              cursor-pointer 
+              flex items-center 
+              space-x-3
+            "
+            onClick={() => handleOrganizationSelect(org)}
+          >
+            <Image
+              src={org.logo || logo}
+              alt={`Logo ${org.name}`}
+              width={32}
+              height={32}
+              className="rounded"
+            />
+            <span>{org.name}</span>
+          </div>
+        ))}
+      </div>
 
-        {/* Boutons d'actions */}
-        <div className="flex space-x-4 mt-4">
-          <button 
-            className="
-              flex items-center 
-              bg-orange-500 
-              text-white 
-              px-4 py-2 
-              rounded 
-              space-x-2 
-              w-full 
-              justify-center
-            "
-          >
-            <Lock className="w-5 h-5" />
-            <span>Verrouiller</span>
-          </button>
-          <button 
-            className="
-              flex items-center 
-              bg-red-500 
-              text-white 
-              px-4 py-2 
-              rounded 
-              space-x-2 
-              w-full 
-              justify-center
-            "
-          >
-            <LogOut className="w-5 h-5" />
-            <span>Déconnexion</span>
-          </button>
+      <div className="border-t py-2">
+        <div
+          className="
+            px-4 py-2 
+            hover:bg-gray-100 
+            cursor-pointer 
+            flex items-center 
+            space-x-3 
+            text-orange-500
+          "
+        >
+          <Lock className="w-5 h-5" />
+          <span>Verrouiller</span>
+        </div>
+        <div
+          className="
+            px-4 py-2 
+            hover:bg-gray-100 
+            cursor-pointer 
+            flex items-center 
+            space-x-3 
+            text-red-500
+          "
+        >
+          <LogOut className="w-5 h-5" />
+          <span>Déconnexion</span>
         </div>
       </div>
     </motion.div>
   );
 
-  // Gestion du changement de langue
-  const handleLanguageChange = (language: LanguageOption) => {
-    setCurrentLanguage(language);
-    setIsLanguageOpen(false);
-  };
+  // Reste du code précédent (methods like handleLanguageChange, etc.) reste identique
 
   // Navbar pour mobile
   if (isMobile) {
@@ -635,22 +257,31 @@ const Navbar: React.FC<NavbarProps> = ({ toggleSidebar, isMobile = false }) => {
           </button>
 
           {/* Bouton de menu (organisations) */}
-          <button onClick={() => setIsMobileMenuOpen(true)} className="flex items-center">
-            <Image 
+          <button onClick={() => setIsDropdownOpen(!isDropdownOpen)} className="flex items-center">
+            <Image
               src={logo}
-              alt="Logo" 
+              alt="Logo"
               width={32}
               height={32}
               className="rounded"
             />
+
           </button>
+          <button onClick={() => setIsDropdownOpen(!isDropdownOpen)}>
+            {isDropdownOpen ? <ChevronUp /> : <ChevronDown />}
+          </button>
+
         </div>
+
+        <AnimatePresence>
+          {isDropdownOpen && <OrganizationDropdown />}
+        </AnimatePresence>
 
         {/* Modals pour mobile */}
         <AnimatePresence>
           {/* Modal de recherche */}
           {isSearchOpen && (
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -658,9 +289,9 @@ const Navbar: React.FC<NavbarProps> = ({ toggleSidebar, isMobile = false }) => {
             >
               <div className="flex items-center w-full bg-gray-100 rounded-full overflow-hidden">
                 <Search className="h-5 w-5 m-2 text-gray-600" />
-                <input 
-                  type="text" 
-                  placeholder="Rechercher..." 
+                <input
+                  type="text"
+                  placeholder="Rechercher..."
                   className="w-full bg-transparent outline-none px-2 py-1 text-gray-800"
                 />
                 <button onClick={() => setIsSearchOpen(false)} className="mr-2">
@@ -669,9 +300,9 @@ const Navbar: React.FC<NavbarProps> = ({ toggleSidebar, isMobile = false }) => {
               </div>
             </motion.div>
           )}
-          
+
           {/* Modal des organisations */}
-          {isMobileMenuOpen && <MobileOrganizationMenu />}
+          {isDropdownOpen && <OrganizationDropdown />}
 
           {/* Modal des notifications */}
           {isNotificationsOpen && (
@@ -680,7 +311,7 @@ const Navbar: React.FC<NavbarProps> = ({ toggleSidebar, isMobile = false }) => {
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ type: 'tween' }}
-              className="fixed top-0 right-0 w-full h-full bg-white z-60 p-6 overflow-y-auto"
+              className="fixed top-0 right-0 w-full h-full bg-white z-60 p-6 overflow-y-auto z-[100]"
             >
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-2xl font-bold">Notifications</h2>
@@ -690,8 +321,8 @@ const Navbar: React.FC<NavbarProps> = ({ toggleSidebar, isMobile = false }) => {
               </div>
 
               {notifications.map((notification, index) => (
-                <div 
-                  key={index} 
+                <div
+                  key={index}
                   className="border-b py-4 hover:bg-gray-100"
                 >
                   <h3 className="font-semibold">{notification.title}</h3>
@@ -707,37 +338,78 @@ const Navbar: React.FC<NavbarProps> = ({ toggleSidebar, isMobile = false }) => {
     );
   }
 
-  
   // Navbar pour desktop
   return (
     <nav className="bg-white shadow-md p-4 flex justify-between items-center relative">
-    <div className="flex items-center">
-      <button onClick={toggleSidebar} className="mr-4">
-        <span className="text-xl font-bold">☰</span>
-      </button>
-    </div>
-    
-    <div className="flex items-center space-x-4">
-      {/* Recherche */}
-      <div className="relative">
-        {isSearchOpen ? (
-          <motion.div
-            initial={{ width: 0, opacity: 0 }}
-            animate={{ width: 'auto', opacity: 1 }}
-            exit={{ width: 0, opacity: 0 }}
-            transition={{ duration: 0.3 }}
-            className="
+      <div className="flex items-center">
+        <button
+          onClick={() => {
+            toggleSidebar(); // Votre méthode originale de toggle
+            toggleSidebarMotion(); // Votre méthode d'animation
+          }}
+          className="mr-4 group transition-all duration-300 ease-in-out"
+        >
+          <AnimatePresence mode="wait">
+            {!isSidebarOpen ? (
+              <motion.div
+                key="menu-icon"
+                initial={{ opacity: 0, rotate: 0 }}
+                animate={{ opacity: 1, rotate: 0 }}
+                exit={{ opacity: 0, rotate: 0 }}
+                transition={{ duration: 0.3 }}
+              >
+                <ChevronLeftCircleIcon
+                  className="text-gray-600 
+                    group-hover:text-blue-500 
+                    transition-colors 
+                    duration-300 
+                    w-6 h-6"
+                />
+              </motion.div>
+            ) : (
+              <motion.div
+                key="close-icon"
+                initial={{ opacity: 0, rotate: 0 }}
+                animate={{ opacity: 1, rotate: 0 }}
+                exit={{ opacity: 0, rotate: 0 }}
+                transition={{ duration: 0.3 }}
+              >
+                <PanelsTopLeft
+                  className="
+                    text-gray-600 
+                    group-hover:text-blue-500 
+                    transition-colors 
+                    duration-300 
+                    w-6 h-6
+                  "
+                />
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </button>
+      </div>
+
+      <div className="flex items-center space-x-4">
+        {/* Recherche */}
+        <div className="relative">
+          {isSearchOpen ? (
+            <motion.div
+              initial={{ width: 0, opacity: 0 }}
+              animate={{ width: 'auto', opacity: 1 }}
+              exit={{ width: 0, opacity: 0 }}
+              transition={{ duration: 0.3 }}
+              className="
               flex items-center 
               bg-gray-100 
               rounded-full 
               overflow-hidden
             "
-          >
-            <Search className="h-5 w-5 m-2 text-gray-600" />
-            <input 
-              type="text" 
-              placeholder="Rechercher..." 
-              className="
+            >
+              <Search className="h-5 w-5 m-2 text-gray-600" />
+              <input
+                type="text"
+                placeholder="Rechercher..."
+                className="
                 w-full 
                 bg-transparent 
                 outline-none 
@@ -745,60 +417,64 @@ const Navbar: React.FC<NavbarProps> = ({ toggleSidebar, isMobile = false }) => {
                 py-1
                 text-gray-800
               "
-            />
-            <button onClick={() => setIsSearchOpen(false)} className="mr-2">
-              <X className="text-gray-600" />
+              />
+              <button onClick={() => setIsSearchOpen(false)} className="mr-2">
+                <X className="text-gray-600" />
+              </button>
+            </motion.div>
+          ) : (
+            <button onClick={() => setIsSearchOpen(true)}>
+              <Search className="text-gray-600" />
             </button>
-          </motion.div>
-        ) : (
-          <button onClick={() => setIsSearchOpen(true)}>
-            <Search className="text-gray-600" />
-          </button>
-        )}
-      </div>
-      
-      {/* Notifications */}
-      <div className="relative">
-        <button onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}>
-          <div className="relative">
-            <Bell className="text-gray-600" />
-            <span className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full text-xs w-4 h-4 flex items-center justify-center">
-              {notifications.length}
-            </span>
-          </div>
-        </button>
-      </div>
-      <div className="relative">
-        <button  onClick={() => setIsLanguageOpen(!isLanguageOpen)} >
-          <div className="relative">
-            <Globe className="text-gray-600" />
-           
-          </div>
-        </button>
-      </div>
-      
-      {/* Language Selector */}
-      <div className="relative">
-     
+          )}
+        </div>
 
-        <AnimatePresence>
-          {isLanguageOpen && (
-            <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.2 }}
-              className="absolute right-0 top-full mt-2 bg-white shadow-lg rounded-lg border w-56 z-50"
-            >
-              <ul className="py-1">
+        {/* Notifications */}
+        <div className="relative">
+          <button onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}>
+            <div className="relative">
+              <Bell className="text-gray-600" />
+              <span className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full text-xs w-4 h-4 flex items-center justify-center">
+                {notifications.length}
+              </span>
+            </div>
+          </button>
+        </div>
+        <div className="relative">
+           <button onClick={() => setIsLanguageOpen(!isLanguageOpen)}>
+            <div className="relative">
+              <Globe className="text-gray-600" />
+
+            </div>
+          </button>
+        </div>
+
+        {/* Language Selector */}
+        <div className="relative">
+
+
+          <AnimatePresence>
+            {isLanguageOpen && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.2 }}
+                className="absolute right-0 top-full mt-2 bg-white shadow-lg rounded-lg border w-56 z-50"
+              >
+                <ul className="py-1">
                 {LANGUAGES.map((language) => (
-                  <li 
+                  <li
                     key={language.code}
-                    onClick={() => handleLanguageChange(language)}
+                    onClick={() => changeLanguage(language.code)}
                     className={`
                       flex items-center space-x-3 px-4 py-2 
                       hover:bg-gray-100 cursor-pointer 
-                      ${currentLanguage.code === language.code ? 'bg-blue-50' : ''}
+                      ${
+                        currentLanguage.code === language.code
+                          ? 'bg-blue-50'
+                          : ''
+                      }
                     `}
                   >
                     <span className="text-xl">{language.flag}</span>
@@ -808,62 +484,63 @@ const Navbar: React.FC<NavbarProps> = ({ toggleSidebar, isMobile = false }) => {
                     )}
                   </li>
                 ))}
-              </ul>
-            </motion.div>
-          )}
-        </AnimatePresence>
+                </ul>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+
+        {/* Profil */}
+        <div className="flex items-center relative">
+          <Image
+            src={theme.logo}
+            alt="Profile"
+            width={40}
+            height={40}
+            className="rounded-full mr-2"
+            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+          />
+          <button onClick={() => setIsDropdownOpen(!isDropdownOpen)}>
+            {isDropdownOpen ? <ChevronUp /> : <ChevronDown />}
+          </button>
+
+          {isDropdownOpen && <OrganizationDropdown />}
+        </div>
       </div>
-      
-      {/* Profil */}
-      <div className="flex items-center relative">
-        <Image 
-          src={logo}
-          alt="Profile" 
-          width={40}
-          height={40}
-          className="rounded-full mr-2"
-        />
-        <button onClick={() => setIsDropdownOpen(!isDropdownOpen)}>
-          {isDropdownOpen ? <ChevronUp /> : <ChevronDown />}
-        </button>
-        
-        {isDropdownOpen && <MobileOrganizationMenu />}
-      </div>
-    </div>
 
 
-    {/* Off-canvas Notifications */}
-    <AnimatePresence>
-      {isNotificationsOpen && (
-        <motion.div
-          initial={{ x: '100%' }}
-          animate={{ x: 0 }}
-          exit={{ x: '100%' }}
-          transition={{ type: 'tween' }}
-          className="fixed top-0 right-0 w-80 h-full bg-white shadow-lg z-50 p-6 overflow-y-auto"
-        >
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-xl font-bold">Notifications</h2>
-            <button onClick={() => setIsNotificationsOpen(false)}>
-              <X className="text-gray-600" />
-            </button>
-          </div>
-          {notifications.map((notification, index) => (
-            <div 
-              key={index} 
-              className="border-b py-3 hover:bg-gray-100 transition"
-            >
-              <h3 className="font-semibold">{notification.title}</h3>
-              <p className="text-sm text-gray-500">
-                {notification.date} à {notification.time}
-              </p>
+      {/* Off-canvas Notifications */}
+      <AnimatePresence>
+        {isNotificationsOpen && (
+          <motion.div
+            initial={{ x: '100%' }}
+            animate={{ x: 0 }}
+            exit={{ x: '100%' }}
+            transition={{ type: 'tween' }}
+            className="fixed top-0 right-0 w-80 h-full bg-white shadow-lg z-50 p-6 overflow-y-auto"
+          >
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-bold">Notifications</h2>
+              <button onClick={() => setIsNotificationsOpen(false)}>
+                <X className="text-gray-600" />
+              </button>
             </div>
-          ))}
-        </motion.div>
-      )}
-    </AnimatePresence>
-  </nav>
-);
+            {notifications.map((notification, index) => (
+              <div
+                key={index}
+                className="border-b py-3 hover:bg-gray-100 transition"
+              >
+                <h3 className="font-semibold">{notification.title}</h3>
+                <p className="text-sm text-gray-500">
+                  {notification.date} à {notification.time}
+                </p>
+              </div>
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </nav>
+  );
 };
 
 export default Navbar;

@@ -1,4 +1,7 @@
 import React from 'react';
+import ChartsOverviewDemo from '../chart/statiticUser';
+import StatisticProject from '../chart/statisticProject';
+import StatisticCompany from '../chart/statisticCompany';
 
 const MainDashboard: React.FC = () => {
   return (
@@ -7,17 +10,18 @@ const MainDashboard: React.FC = () => {
      
       <div className="bg-white p-6 rounded-lg shadow-md">
         <h2 className="text-xl font-semibold mb-4">Statistiques</h2>
-        {/* Contenu des statistiques */}
+        <ChartsOverviewDemo/>
       </div>
       
       <div className="bg-white p-6 rounded-lg shadow-md">
-        <h2 className="text-xl font-semibold mb-4">Projets Récents</h2>
-        {/* Liste des projets */}
+        <h2 className="text-xl font-semibold mb-4">Utilisateurs par projet</h2>
+        <br/><br/>
+        <StatisticProject/>
       </div>
       
       <div className="bg-white p-6 rounded-lg shadow-md">
-        <h2 className="text-xl font-semibold mb-4">Notifications</h2>
-        {/* Liste des notifications */}
+        <h2 className="text-xl font-semibold mb-4">Utilisateurs par société</h2>
+       <StatisticCompany/>
       </div>
       
     </div>
