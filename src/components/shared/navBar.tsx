@@ -1,53 +1,46 @@
-'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
 import {
   Bell,
   Search,
-  Menu,
-  X,
-  User,
+  ChevronDown,
+  ChevronUp,
   Settings,
   LogOut,
-  ChevronUp,
-  ChevronDown,
-  Globe,
-  Lock,
-  AlignJustify,
-  PanelLeft, // Nouvel icône pour l'animation de sidebar
-  PanelsTopLeft,
-  ChevronLeftCircleIcon
+  Menu as MenuIcon,
+  X,
+  LayoutDashboard,
+  Layers,
+  FormInput,
+  Star,
+  PieChart,
+  Table,
+  File,
+  User,
+  Globe
 } from 'lucide-react';
-import { AnimatePresence, motion } from 'framer-motion';
-import Image from 'next/image';
-import Link from 'next/link';
-import { useTranslation } from 'next-i18next';
+import Button from '@mui/material/Button';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
 import logo from "@/utilities/images/logos/logo_AGL_rgb_Blue.png"
 import logoSCP from "@/utilities/images/logos/logoScpao.jpg"
 import { THEMES } from './themes';
 import { useOrganizationStore } from './storeoftheme';
-import { useRouter } from 'next/router';
-
-const LANGUAGES = [
-  { code: 'fr', name: 'Français', flag: '🇫🇷' },
-  { code: 'en', name: 'English', flag: '🇬🇧' },
-  // { code: 'es', name: 'Español', flag: '🇪🇸' },
-  // { code: 'de', name: 'Deutsch', flag: '🇩🇪' }
-];
-
-interface LanguageOption {
-  code: string;
-  name: string;
-  flag: string;
-}
-
-
-
-interface NavbarProps {
-  toggleSidebar: () => void;
-  isMobile?: boolean;
-  isSidebarOpen?: boolean;
-}
+import { useMsal } from "@azure/msal-react";
+import ListSubheader from '@mui/material/ListSubheader';
+import List from '@mui/material/List';
+import ListItemButton from '@mui/material/ListItemButton';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import Collapse from '@mui/material/Collapse';
+import InboxIcon from '@mui/icons-material/MoveToInbox';
+import DraftsIcon from '@mui/icons-material/Drafts';
+import SendIcon from '@mui/icons-material/Send';
+import ExpandLess from '@mui/icons-material/ExpandLess';
+import ExpandMore from '@mui/icons-material/ExpandMore';
+import StarBorder from '@mui/icons-material/StarBorder';
+import { FormControl } from '@mui/material';
+import Link from 'next/link';
 
 interface Organization {
   id: any;
@@ -56,92 +49,154 @@ interface Organization {
   logo?: any;
 }
 
-const Navbar: React.FC<NavbarProps> = ({
-  toggleSidebar,
-  isMobile = false,
-}) => {
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [isLanguageDropdownOpen, setIsLanguageDropdownOpen] = useState(false);
-  const [isLanguageOpen, setIsLanguageOpen] = useState(false);
-  const [currentLanguage, setCurrentLanguage] = useState(LANGUAGES[0]);
-  const dropdownRef = useRef<HTMLDivElement>(null);
-  const { currentOrganization, getCurrentTheme } = useOrganizationStore();
-  const theme = getCurrentTheme();
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const { i18n } = useTranslation();
-  const router = useRouter();
+// Types
+type NavItem = {
+  label: string;
+  icon: React.ReactNode;
+  href: string;
+  subItems?: {
+    label: string;
+    icon: React.ReactNode;
+    href: string;
+    subItems?: {
+      label: string;
+      icon: React.ReactNode;
+      href: string;
+      subItems?: {
+        label: string;
+        icon: React.ReactNode;
+        href: string;
+      }[];
+    }[];
+  }[];
+};
 
-  // Synchroniser l'état local avec la langue active
-  useEffect(() => {
-    const activeLanguage = LANGUAGES.find(
-      (language) => language.code === i18n.language
-    );
-    if (activeLanguage) {
-      setCurrentLanguage(activeLanguage);
-    }
-  }, [i18n.language]);
- 
-  // const changeLanguage = (lng: string) => {
-  //   i18n.changeLanguage(lng);
-  //   const selectedLanguage = LANGUAGES.find((lang) => lang.code === lng);
-  //   console.log('langage',selectedLanguage)
-   
-  //   if (selectedLanguage) {
-  //     setCurrentLanguage(selectedLanguage);
-  //   }
-  // }
-  const changeLanguage = (lng: string) => {
-    const currentPath = router.asPath === '/' ? `/${i18n.language}` : router.asPath;
-    const newPath = currentPath.replace(`/${i18n.language}`, `/${lng}`);
-    i18n.changeLanguage(lng);
-    router.push(newPath);
-  };
-  const toggleSidebarMotion = () => {
-    setIsSidebarOpen(prevState => !prevState);
-  };
-  // Liste des organisations
-  const organizations: Organization[] = [
-    {
-      id: '1',
-      name: 'AGL Group',
-      code: 'agl',  // Now must be one of the defined values
-      logo: logo,
-    },
-    {
-      id: '2',
-      name: 'SCP',
-      code: 'scp',  // Now must be one of the defined values
-      logo: logoSCP
-    }
-  ];
 
-  // Fermeture du dropdown si on clique en dehors
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setIsDropdownOpen(false);
+
+
+const navigationItems: NavItem[] = [
+  {
+    label: 'Dashboard',
+    icon: <LayoutDashboard className="w-4 h-4" />,
+    href: '/Accueil',
+  },
+  {
+    label: 'UI Elements',
+    icon: <Layers className="w-4 h-4" />,
+    href: '/ui-elements',
+    subItems: [
+      {
+        label: 'Tables',
+        icon: <Star className="w-4 h-4" />,
+        href: '/ui-elements/buttons',
+        subItems: [
+          {
+            label: 'Table Simple',
+            icon: <Star className="w-4 h-4" />,
+            href: '/ui-elements/buttons/primary',
+          
+          },
+          {
+            label: 'Table data',
+            icon: <Star className="w-4 h-4" />,
+            href: '/Components'
+          }
+        ]
+      },
+      {
+        label: 'Cards',
+        icon: <Star className="w-4 h-4" />,
+        href: '/ui-elements/cards'
+      },
+    ],
+  },
+  {
+    label: 'Forms',
+    icon: <FormInput className="w-4 h-4" />,
+    href: '/forms',
+    subItems: [
+      {
+        label: 'Basic Forms',
+        icon: <FormControl className="w-4 h-4" />,
+        href: '/Components',
+        subItems: [
+          {
+            label: 'Input Fields',
+            icon: <Star className="w-4 h-4" />,
+            href: '/forms/basic/inputs',
+            subItems: [
+              {
+                label: 'Text Inputs',
+                icon: <Star className="w-4 h-4" />,
+                href: '/forms/basic/inputs/text'
+              }
+            ]
+          },
+          {
+            label: 'Input Fields 2',
+            icon: <Star className="w-4 h-4" />,
+            href: '/forms/basic/inputs',
+
+          },
+          {
+            label: 'Input Fields 3',
+            icon: <Star className="w-4 h-4" />,
+            href: '/forms/basic/inputs',
+
+          },
+          {
+            label: 'Input Fields 4',
+            icon: <Star className="w-4 h-4" />,
+            href: '/forms/basic/inputs',
+
+          },
+        ],
+
       }
-    };
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, []);
+    ]
+  },
 
-  const notifications = [
-    { title: 'Nouvelle tâche assignée', date: '2024-02-15', time: '14:30', isOpen: false },
-    { title: 'Réunion à venir', date: '2024-02-16', time: '10:00', isOpen: false },
-    { title: 'Rapport terminé', date: '2024-02-14', time: '16:45', isOpen: false }
-  ];
+];
 
+const LANGUAGES = [
+  { code: 'fr', name: 'Français', flag: '🇫🇷' },
+  { code: 'en', name: 'English', flag: '🇬🇧' },
+];
 
+const Logo = () => (
+  <div className="flex items-center gap-2">
+    <UserProfile />
+  </div>
+);
 
+const SearchBar = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  return (
+    <div className="relative flex-1 max-w-md">
+      <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+      <input
+        type="text"
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+        placeholder="Recherche..."
+        className="w-full pl-10 pr-4 py-2 bg-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+      />
+    </div>
+  );
+};
+
+const UserProfile = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const { accounts, instance } = useMsal();
+
+  const { currentOrganization, getCurrentTheme } = useOrganizationStore();
   const { setCurrentOrganization } = useOrganizationStore();
 
+  const theme = getCurrentTheme();
   const handleOrganizationSelect = (org: {
     id: string;
     name: string;
@@ -157,391 +212,580 @@ const Navbar: React.FC<NavbarProps> = ({
     }
   };
 
-  // Menu des organisations pour desktop
-  const OrganizationDropdown = () => (
-    <motion.div
-      ref={dropdownRef}
-      initial={{ opacity: 0, y: -10 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -10 }}
-      transition={{ duration: 0.2 }}
-      className={`
-      ${isMobile
-          ? 'fixed top-0 right-0 w-full h-full bg-white z-[100] p-6 overflow-y-auto'
-          : 'absolute right-0 top-full mt-2 bg-white shadow-lg rounded-lg border w-64 z-[100]'
-        }
-    `}
-    >
-      <div className="px-4 py-2 border-b">
-        <h3 className="font-semibold text-gray-700">Organisations</h3>
-      </div>
+  const userInfos = {
+    name: `${accounts[0]?.name}`,
+    avatar: '/logos/logo_AGL_rgb_Blue.png',
+    email: `${accounts[0]?.username}`
+  };
 
-      <div className="py-2">
-        {organizations.map((org) => (
-          <div
-            key={org.id}
-            className="
-              px-4 py-2 
-              hover:bg-gray-100 
-              cursor-pointer 
-              flex items-center 
-              space-x-3
-            "
-            onClick={() => handleOrganizationSelect(org)}
-          >
-            <Image
-              src={org.logo || logo}
-              alt={`Logo ${org.name}`}
-              width={32}
-              height={32}
-              className="rounded"
-            />
-            <span>{org.name}</span>
-          </div>
-        ))}
-      </div>
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
 
-      <div className="border-t py-2">
-        <div
-          className="
-            px-4 py-2 
-            hover:bg-gray-100 
-            cursor-pointer 
-            flex items-center 
-            space-x-3 
-            text-orange-500
-          "
-        >
-          <Lock className="w-5 h-5" />
-          <span>Verrouiller</span>
-        </div>
-        <div
-          className="
-            px-4 py-2 
-            hover:bg-gray-100 
-            cursor-pointer 
-            flex items-center 
-            space-x-3 
-            text-red-500
-          "
-        >
-          <LogOut className="w-5 h-5" />
-          <span>Déconnexion</span>
-        </div>
-      </div>
-    </motion.div>
-  );
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
-  // Reste du code précédent (methods like handleLanguageChange, etc.) reste identique
+  const handleLogout = async () => {
+    try {
+      await instance.logoutRedirect(); // Déconnexion via MSAL avec redirection
+    } catch (error) {
+      console.error("Erreur lors de la déconnexion :", error);
+    }
+  };
 
-  // Navbar pour mobile
-  if (isMobile) {
-    return (
-      <nav className="bg-white shadow-md p-4 flex justify-between items-center">
-        <button onClick={toggleSidebar}>
-          <Menu className="w-6 h-6" />
-        </button>
-
-        <div className="flex items-center space-x-4">
-          {/* Recherche */}
-          <button onClick={() => setIsSearchOpen(true)}>
-            <Search className="w-5 h-5" />
-          </button>
-
-          {/* Notifications */}
-          <button onClick={() => setIsNotificationsOpen(true)} className="relative">
-            <Bell className="w-5 h-5" />
-            <span className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full text-xs w-4 h-4 flex items-center justify-center">
-              {notifications.length}
-            </span>
-          </button>
-
-          {/* Bouton de menu (organisations) */}
-          <button onClick={() => setIsDropdownOpen(!isDropdownOpen)} className="flex items-center">
-            <Image
-              src={logo}
-              alt="Logo"
-              width={32}
-              height={32}
-              className="rounded"
-            />
-
-          </button>
-          <button onClick={() => setIsDropdownOpen(!isDropdownOpen)}>
-            {isDropdownOpen ? <ChevronUp /> : <ChevronDown />}
-          </button>
-
-        </div>
-
-        <AnimatePresence>
-          {isDropdownOpen && <OrganizationDropdown />}
-        </AnimatePresence>
-
-        {/* Modals pour mobile */}
-        <AnimatePresence>
-          {/* Modal de recherche */}
-          {isSearchOpen && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed top-0 left-0 w-full bg-white p-4 z-50 flex items-center"
-            >
-              <div className="flex items-center w-full bg-gray-100 rounded-full overflow-hidden">
-                <Search className="h-5 w-5 m-2 text-gray-600" />
-                <input
-                  type="text"
-                  placeholder="Rechercher..."
-                  className="w-full bg-transparent outline-none px-2 py-1 text-gray-800"
-                />
-                <button onClick={() => setIsSearchOpen(false)} className="mr-2">
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
-            </motion.div>
-          )}
-
-          {/* Modal des organisations */}
-          {isDropdownOpen && <OrganizationDropdown />}
-
-          {/* Modal des notifications */}
-          {isNotificationsOpen && (
-            <motion.div
-              initial={{ x: '100%' }}
-              animate={{ x: 0 }}
-              exit={{ x: '100%' }}
-              transition={{ type: 'tween' }}
-              className="fixed top-0 right-0 w-full h-full bg-white z-60 p-6 overflow-y-auto z-[100]"
-            >
-              <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold">Notifications</h2>
-                <button onClick={() => setIsNotificationsOpen(false)}>
-                  <X className="w-6 h-6" />
-                </button>
-              </div>
-
-              {notifications.map((notification, index) => (
-                <div
-                  key={index}
-                  className="border-b py-4 hover:bg-gray-100"
-                >
-                  <h3 className="font-semibold">{notification.title}</h3>
-                  <p className="text-sm text-gray-500">
-                    {notification.date} à {notification.time}
-                  </p>
-                </div>
-              ))}
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </nav>
-    );
-  }
-
-  // Navbar pour desktop
   return (
-    <nav className="bg-white shadow-md p-4 flex justify-between items-center relative">
-      <div className="flex items-center">
-        <button
-          onClick={() => {
-            toggleSidebar(); // Votre méthode originale de toggle
-            toggleSidebarMotion(); // Votre méthode d'animation
-          }}
-          className="mr-4 group transition-all duration-300 ease-in-out"
-        >
-          <AnimatePresence mode="wait">
-            {!isSidebarOpen ? (
-              <motion.div
-                key="menu-icon"
-                initial={{ opacity: 0, rotate: 0 }}
-                animate={{ opacity: 1, rotate: 0 }}
-                exit={{ opacity: 0, rotate: 0 }}
-                transition={{ duration: 0.3 }}
-              >
-                <ChevronLeftCircleIcon
-                  className="text-gray-600 
-                    group-hover:text-blue-500 
-                    transition-colors 
-                    duration-300 
-                    w-6 h-6"
-                />
-              </motion.div>
-            ) : (
-              <motion.div
-                key="close-icon"
-                initial={{ opacity: 0, rotate: 0 }}
-                animate={{ opacity: 1, rotate: 0 }}
-                exit={{ opacity: 0, rotate: 0 }}
-                transition={{ duration: 0.3 }}
-              >
-                <PanelsTopLeft
-                  className="
-                    text-gray-600 
-                    group-hover:text-blue-500 
-                    transition-colors 
-                    duration-300 
-                    w-6 h-6
-                  "
-                />
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </button>
-      </div>
+    <div className="relative" ref={dropdownRef}>
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-100"
+      >
+        <img
+          src={theme.logo}
+          alt="User"
+          className="w-8 h-8 rounded-full"
+        />
+        <div className="hidden-md-block text-left">
+          <div className="text-sm font-medium">{userInfos.name}</div>
+          <div className="text-xs text-gray-500">{userInfos.email}</div>
+        </div>
+        {isOpen ? (
+          <ChevronUp className="w-4 h-4 text-gray-500" />
+        ) : (
+          <ChevronDown className="w-4 h-4 text-gray-500" />
+        )}
+      </button>
 
-      <div className="flex items-center space-x-4">
-        {/* Recherche */}
-        <div className="relative">
-          {isSearchOpen ? (
-            <motion.div
-              initial={{ width: 0, opacity: 0 }}
-              animate={{ width: 'auto', opacity: 1 }}
-              exit={{ width: 0, opacity: 0 }}
-              transition={{ duration: 0.3 }}
-              className="
-              flex items-center 
-              bg-gray-100 
-              rounded-full 
-              overflow-hidden
-            "
+      {isOpen && (
+        <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border py-1 z-50">
+          <button className="w-full px-4 py-2 text-left hover:bg-gray-100 flex items-center gap-2">
+            <User className="w-4 h-4" />
+            Profil
+          </button>
+          {/* <button className="w-full px-4 py-2 text-left hover:bg-gray-100 flex items-center gap-2">
+            <Settings className="w-4 h-4" />
+            Settings
+          </button> */}
+          <hr className="my-1" />
+          <button className="w-full px-4 py-2 text-left hover:bg-gray-100 flex items-center gap-2 text-red-600"
+            onClick={handleLogout}>
+            <LogOut className="w-4 h-4" />
+            Déconnexion
+          </button>
+        </div>
+      )}
+    </div>
+  );
+};
+
+
+
+
+const OrganizationSelector = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  const { currentOrganization, getCurrentTheme } = useOrganizationStore();
+  const { setCurrentOrganization } = useOrganizationStore();
+
+  const organizations: Organization[] = [
+    {
+      id: '1',
+      name: 'AGL Group',
+      code: 'agl',  // Now must be one of the defined values
+      logo: "https://th.bing.com/th?q=Logos+AGL&w=120&h=120&c=1&rs=1&qlt=90&cb=1&pid=InlineBlock&mkt=en-WW&cc=CM&setlang=fr&adlt=moderate&t=1&mw=247",
+    },
+    {
+      id: '2',
+      name: 'SOCOPAO',
+      code: 'scp',  // Now must be one of the defined values
+      logo: "https://cecomar.sn/wp-content/uploads/2022/12/socopao-300x175.jpg"
+    }
+  ];
+  const theme = getCurrentTheme();
+  const handleOrganizationSelect = (org: {
+    id: string;
+    name: string;
+    code: keyof typeof THEMES;
+    logo?: string;
+  }) => {
+    // Ensure the organization code is valid
+    if (THEMES[org.code]) {
+      setCurrentOrganization(org);
+      // Additional logic like closing dropdown can be added here
+    } else {
+      console.error(`Invalid organization code: ${org.code}`);
+    }
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  return (
+    <div className="relative" ref={dropdownRef}>
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-100"
+      >
+        <img src={theme.logo} alt="Organization" className="w-6 h-6 rounded" />
+        <span>{theme.cygle}</span>
+        <ChevronDown className="w-4 h-4" />
+      </button>
+
+      {isOpen && (
+        <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border py-1 z-50">
+          {organizations.map((org) => (
+            <button
+              key={org.id}
+              className="w-full px-4 py-2 text-left hover:bg-gray-100 flex items-center gap-2"
+              onClick={() => handleOrganizationSelect(org)}
             >
-              <Search className="h-5 w-5 m-2 text-gray-600" />
-              <input
-                type="text"
-                placeholder="Rechercher..."
-                className="
-                w-full 
-                bg-transparent 
-                outline-none 
-                px-2 
-                py-1
-                text-gray-800
-              "
-              />
-              <button onClick={() => setIsSearchOpen(false)} className="mr-2">
-                <X className="text-gray-600" />
-              </button>
-            </motion.div>
-          ) : (
-            <button onClick={() => setIsSearchOpen(true)}>
-              <Search className="text-gray-600" />
+              <img src={org.logo}
+                alt={org.name} className="w-6 h-6 rounded" />
+              <span>{org.name}</span>
             </button>
-          )}
+          ))}
         </div>
+      )}
+    </div>
+  );
+};
 
-        {/* Notifications */}
-        <div className="relative">
-          <button onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}>
-            <div className="relative">
-              <Bell className="text-gray-600" />
-              <span className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full text-xs w-4 h-4 flex items-center justify-center">
-                {notifications.length}
-              </span>
-            </div>
-          </button>
-        </div>
-        <div className="relative">
-           <button onClick={() => setIsLanguageOpen(!isLanguageOpen)}>
-            <div className="relative">
-              <Globe className="text-gray-600" />
+const NotificationBell = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const notifications = [
+    { title: 'Nouvelle validation', time: '2 min ' },
+    { title: 'Rappel validateur', time: '1 heure ' },
+    { title: 'Demande en attente', time: '2 heure ' },
+  ];
 
-            </div>
-          </button>
-        </div>
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
 
-        {/* Language Selector */}
-        <div className="relative">
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
+  return (
+    <div className="relative" ref={dropdownRef}>
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="relative p-2 rounded-lg hover:bg-gray-100"
+      >
+        <Bell className="w-5 h-5 text-gray-600" />
+        <span className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full text-xs w-4 h-4 flex items-center justify-center">
+          3
+        </span>
+      </button>
 
-          <AnimatePresence>
-            {isLanguageOpen && (
-              <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.2 }}
-                className="absolute right-0 top-full mt-2 bg-white shadow-lg rounded-lg border w-56 z-50"
-              >
-                <ul className="py-1">
-                {LANGUAGES.map((language) => (
-                  <li
-                    key={language.code}
-                    onClick={() => changeLanguage(language.code)}
-                    className={`
-                      flex items-center space-x-3 px-4 py-2 
-                      hover:bg-gray-100 cursor-pointer 
-                      ${
-                        currentLanguage.code === language.code
-                          ? 'bg-blue-50'
-                          : ''
-                      }
-                    `}
-                  >
-                    <span className="text-xl">{language.flag}</span>
-                    <span>{language.name}</span>
-                    {currentLanguage.code === language.code && (
-                      <span className="ml-auto text-blue-500">✓</span>
-                    )}
-                  </li>
-                ))}
-                </ul>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-
-        {/* Profil */}
-        <div className="flex items-center relative">
-          <Image
-            src={theme.logo}
-            alt="Profile"
-            width={40}
-            height={40}
-            className="rounded-full mr-2"
-            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-          />
-          <button onClick={() => setIsDropdownOpen(!isDropdownOpen)}>
-            {isDropdownOpen ? <ChevronUp /> : <ChevronDown />}
-          </button>
-
-          {isDropdownOpen && <OrganizationDropdown />}
-        </div>
-      </div>
-
-
-      {/* Off-canvas Notifications */}
-      <AnimatePresence>
-        {isNotificationsOpen && (
-          <motion.div
-            initial={{ x: '100%' }}
-            animate={{ x: 0 }}
-            exit={{ x: '100%' }}
-            transition={{ type: 'tween' }}
-            className="fixed top-0 right-0 w-80 h-full bg-white shadow-lg z-50 p-6 overflow-y-auto"
-          >
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-bold">Notifications</h2>
-              <button onClick={() => setIsNotificationsOpen(false)}>
-                <X className="text-gray-600" />
-              </button>
-            </div>
+      {isOpen && (
+        <div className="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-lg border z-50">
+          <div className="p-4 border-b">
+            <h3 className="font-semibold">Notifications</h3>
+          </div>
+          <div className="max-h-96 overflow-y-auto">
             {notifications.map((notification, index) => (
-              <div
-                key={index}
-                className="border-b py-3 hover:bg-gray-100 transition"
-              >
-                <h3 className="font-semibold">{notification.title}</h3>
-                <p className="text-sm text-gray-500">
-                  {notification.date} à {notification.time}
-                </p>
+              <div key={index} className="p-4 border-b hover:bg-gray-50">
+                <div className="font-medium">{notification.title}</div>
+                <div className="text-sm text-gray-500">{notification.time}</div>
               </div>
             ))}
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </nav>
+          </div>
+          <div className="p-4 text-center">
+            <button className="text-blue-600 hover:text-blue-800">
+              Voir toutes les notifications
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+const LanguageSelector = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [currentLanguage, setCurrentLanguage] = useState(LANGUAGES[0]);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  return (
+    <div className="relative" ref={dropdownRef}>
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-100"
+      >
+        <Globe className="w-5 h-5" />
+        <span>{currentLanguage.flag}</span>
+        <span>{currentLanguage.code.toUpperCase()}</span>
+        <ChevronDown className="w-4 h-4" />
+      </button>
+
+      {isOpen && (
+        <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border z-50">
+          {LANGUAGES.map((language) => (
+            <button
+              key={language.code}
+              className="w-full px-4 py-2 text-left hover:bg-gray-100 flex items-center gap-2"
+              onClick={() => {
+                setCurrentLanguage(language);
+                setIsOpen(false);
+              }}
+            >
+              <span>{language.flag}</span>
+              <span>{language.name}</span>
+              {currentLanguage.code === language.code && (
+                <span className="ml-auto text-blue-500">✓</span>
+              )}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
+
+const MobileNav = ({
+  isOpen,
+  onClose,
+  items,
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+  items: NavItem[];
+}) => {
+  const [openSubMenus, setOpenSubMenus] = useState<Record<string, boolean>>({}); // État pour les sous-menus
+
+  const { currentOrganization, getCurrentTheme } = useOrganizationStore();
+  const { setCurrentOrganization } = useOrganizationStore();
+  const theme = getCurrentTheme();
+
+  const handleSubMenuToggle = (key: string) => {
+    setOpenSubMenus((prevState) => ({
+      ...prevState,
+      [key]: !prevState[key], // Inverser l'état d'ouverture du sous-menu
+    }));
+  };
+
+  const renderSubItems = (
+    subItems: NavItem['subItems'],
+    parentKey: string
+  ) => {
+    if (!subItems) return null;
+
+    return (
+      <div className="ml-4">
+        {subItems.map((subItem, index) => {
+          const key = `${parentKey}-${subItem.label}`;
+          return (
+            <div key={key} className="mb-2">
+              {subItem.subItems ? (
+                <button
+                  className="flex items-center gap-2 text-white p-2 rounded hover:bg-gray-100 w-full text-left"
+                  onClick={() => handleSubMenuToggle(key)}
+                >
+                  {subItem.icon}
+                  <span>{subItem.label}</span>
+                  {openSubMenus[key] ? (
+                    <ChevronUp className="w-4 h-4" />
+                  ) : (
+                    <ChevronDown className="w-4 h-4" />
+                  )}
+                </button>
+              ) : (
+                <Link href={subItem.href} passHref>
+                  <a className="flex items-center gap-2 text-white p-2 rounded hover:bg-gray-100 w-full text-left">
+                    {subItem.icon}
+                    <span>{subItem.label}</span>
+                  </a>
+                </Link>
+              )}
+              {subItem.subItems && openSubMenus[key] && (
+                <div className="ml-4">
+                  {renderSubItems(subItem.subItems, key)}
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    );
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 z-50">
+      <div
+        className={`fixed inset-y-0 left-0 w-64 ${theme.navbar.background} shadow-lg`}
+      >
+        <div className="p-4 border-b flex justify-between items-center">
+          <Logo />
+          <button onClick={onClose}>
+            <X className="w-6 h-6 text-white" />
+          </button>
+        </div>
+        <nav className="p-4">
+          {items.map((item, index) => (
+            <div key={index} className="mb-4">
+              {/* Menu principal */}
+              {item.subItems ? (
+                <button
+                  className="flex items-center gap-2 text-white p-2 rounded hover:bg-gray-100 w-full text-left"
+                  onClick={() => handleSubMenuToggle(item.label)}
+                >
+                  {item.icon}
+                  <span>{item.label}</span>
+                  {openSubMenus[item.label] ? (
+                    <ChevronUp className="w-4 h-4" />
+                  ) : (
+                    <ChevronDown className="w-4 h-4" />
+                  )}
+                </button>
+              ) : (
+                <Link href={item.href} passHref>
+                  <a className="flex items-center gap-2 text-white p-2 rounded hover:bg-gray-100 w-full text-left">
+                    {item.icon}
+                    <span>{item.label}</span>
+                  </a>
+                </Link>
+              )}
+              {/* Sous-menus */}
+              {item.subItems && openSubMenus[item.label] && (
+                <div className="ml-4">
+                  {renderSubItems(item.subItems, item.label)}
+                </div>
+              )}
+            </div>
+          ))}
+        </nav>
+      </div>
+    </div>
+  );
+};
+
+
+// Navigation Item Component
+
+
+const NavItem = ({ item }: { item: NavItem }) => {
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null); // Pour les menus principaux
+  const [openSubMenus, setOpenSubMenus] = useState<Record<string, boolean>>({}); // Gestion indépendante des sous-menus
+
+  const { currentOrganization, getCurrentTheme } = useOrganizationStore();
+  const { setCurrentOrganization } = useOrganizationStore();
+  const theme = getCurrentTheme();
+
+  const handleMenuClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleSubMenuToggle = (label: string) => {
+    setOpenSubMenus((prevState) => ({
+      ...prevState,
+      [label]: !prevState[label], // Inverser l'état d'ouverture du sous-menu
+    }));
+  };
+
+  const renderSubItems = (subItems: NavItem['subItems'], parentKey: string) => {
+    if (!subItems) return null;
+
+    return (
+      <List component="div" disablePadding>
+        {subItems.map((subItem, index) => {
+          const key = `${parentKey}-${subItem.label}`;
+          return (
+            <div key={key}>
+              {subItem.subItems ? (
+                <ListItemButton
+                  sx={{ pl: 2 }}
+                  onClick={() => handleSubMenuToggle(key)}
+                >
+                  <ListItemIcon>{subItem.icon}</ListItemIcon>
+                  <ListItemText primary={subItem.label} />
+                  {openSubMenus[key] ? <ExpandLess /> : <ExpandMore />}
+                </ListItemButton>
+              ) : (
+                <Link href={subItem.href} passHref>
+                  <ListItemButton sx={{ pl: 2 }} component="a">
+                    <ListItemIcon>{subItem.icon}</ListItemIcon>
+                    <ListItemText primary={subItem.label} />
+                  </ListItemButton>
+                </Link>
+              )}
+              {subItem.subItems && (
+                <Collapse in={openSubMenus[key]} timeout="auto" unmountOnExit>
+                  {renderSubItems(subItem.subItems, key)}
+                </Collapse>
+              )}
+            </div>
+          );
+        })}
+      </List>
+    );
+  };
+
+  return (
+    <div className={`relative group ${theme.navbar.background}`}>
+      {/* Bouton principal */}
+      {item.subItems ? (
+        <Button
+          variant="text"
+          onClick={handleMenuClick}
+          className="flex items-center gap-2 text-white"
+        >
+          <span className="flex items-center text-white">{item.icon}</span>
+          <span className="flex items-center text-white">{item.label}</span>
+          <ChevronDown className="w-4 h-4 text-white flex items-center" />
+        </Button>
+      ) : (
+        <Link href={item.href} passHref>
+          <Button
+            variant="text"
+            className="flex items-center gap-2 text-white"
+          >
+            <span className="flex items-center text-white">{item.icon}</span>
+            <span className="flex items-center text-white">{item.label}</span>
+          </Button>
+        </Link>
+      )}
+
+      {/* Menu principal */}
+      {item.subItems && (
+        <Menu
+          anchorEl={anchorEl}
+          open={Boolean(anchorEl)}
+          onClose={handleMenuClose}
+        >
+          <List
+            sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}
+            component="nav"
+          >
+            {item.subItems.map((subItem, index) => (
+              <div key={index}>
+                {subItem.subItems ? (
+                  <ListItemButton
+                    onClick={() => handleSubMenuToggle(subItem.label)}
+                  >
+                    <ListItemIcon>{subItem.icon}</ListItemIcon>
+                    <ListItemText primary={subItem.label} />
+                    {openSubMenus[subItem.label] ? <ExpandLess /> : <ExpandMore />}
+                  </ListItemButton>
+                ) : (
+                  <Link href={subItem.href} passHref>
+                    <ListItemButton component="a">
+                      <ListItemIcon>{subItem.icon}</ListItemIcon>
+                      <ListItemText primary={subItem.label} />
+                    </ListItemButton>
+                  </Link>
+                )}
+                {subItem.subItems && (
+                  <Collapse
+                    in={openSubMenus[subItem.label]}
+                    timeout="auto"
+                    unmountOnExit
+                  >
+                    {renderSubItems(subItem.subItems, subItem.label)}
+                  </Collapse>
+                )}
+              </div>
+            ))}
+          </List>
+        </Menu>
+      )}
+    </div>
+  );
+};
+
+
+
+// Main Navigation Component
+const Navigation = () => (
+  <nav className="flex items-center gap-4">
+    {navigationItems.map((item, index) => (
+      <NavItem key={index} item={item} />
+    ))}
+  </nav>
+);
+
+
+const Navbar = () => {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { currentOrganization, getCurrentTheme } = useOrganizationStore();
+  const theme = getCurrentTheme();
+
+  return (
+    <header className="bg-white border-b">
+      {/* Top Bar */}
+      <div className="px-4 h-16 flex items-center justify-between border-b">
+        <div className="flex items-center gap-4">
+          <Logo />
+          <div className="hidden-md-block">
+            <SearchBar />
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <div className="hidden-md-block flex items-center gap-2">
+            <NotificationBell />
+            <OrganizationSelector />
+            <LanguageSelector />
+          </div>
+          <button
+            className="md:hidden p-2 rounded-lg hover:bg-gray-100"
+            onClick={() => setIsMobileMenuOpen(true)}
+          >
+            <MenuIcon className="w-6 h-6" />
+          </button>
+        </div>
+      </div>
+
+      {/* Navigation Bar */}
+
+      <div className={`flex items-center justify-center h-14  ${theme.navbar.background} text-white hidden-md-block`}>
+        <Navigation />
+      </div>
+
+
+
+      {/* Mobile Navigation */}
+      <MobileNav
+        isOpen={isMobileMenuOpen}
+        onClose={() => setIsMobileMenuOpen(false)}
+        items={navigationItems}
+      />
+    </header>
   );
 };
 
 export default Navbar;
-

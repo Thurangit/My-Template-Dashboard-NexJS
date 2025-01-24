@@ -1,65 +1,59 @@
-// msalConfig.js
-import { //PublicClientApplication, 
-  LogLevel } from '@azure/msal-browser';
-import * as msal from "@azure/msal-browser";
+import { PublicClientApplication, LogLevel, Configuration } from "@azure/msal-browser";
 
-import { URI_REDIRECTION, SCOPE, AUTHORITHY, CLIENT_ID } from './environment';
-export const msalConfig = {
+// Configuration MSAL
+const msalConfig: Configuration = {
   auth: {
-    clientId: CLIENT_ID,
-    authority: AUTHORITHY,
-    redirectUri: URI_REDIRECTION,
-    postLogoutRedirectUri: '/',
-    navigateToLoginRequestUrl: false
+    clientId: "b09e08e9-781c-40cf-a3b6-e648439732f8", // Remplacez par votre clientId
+    authority: "https://login.microsoftonline.com/088e9b00-ffd0-458e-bfa1-acf4c596d3cb", // Remplacez par votre tenant ID
+    redirectUri: "https://localhost:3000", // Assurez-vous que cette URL est enregistrée dans Azure AD
+    postLogoutRedirectUri: "/", // URL de redirection après déconnexion
+    navigateToLoginRequestUrl: false, // Empêche de revenir sur l'URL d'origine avec les paramètres
   },
   cache: {
-    cacheLocation: "localStorage",
-    //cacheLocation: "sessionStorage",
-    storeAuthStateInCookie: false,
+    cacheLocation: "sessionStorage", // Utilisation de sessionStorage pour éviter le stockage persistant
+    storeAuthStateInCookie: false, // Requis pour IE11/Edge si nécessaire
   },
   system: {
     loggerOptions: {
-      loggerCallback: (level: any, message: string, containsPii: any) => {
-        if (containsPii) {
-          return;
-        }
+      loggerCallback: (level, message, containsPii) => {
+        if (containsPii) return;
+
         switch (level) {
           case LogLevel.Error:
             console.error(message);
-            return;
+            break;
           case LogLevel.Info:
             console.info(message);
-            return;
+            break;
           case LogLevel.Verbose:
             console.debug(message);
-            return;
+            break;
           case LogLevel.Warning:
             console.warn(message);
-            return;
+            break;
           default:
-            return;
+            break;
         }
-      }
-    }
-  }
+      },
+      piiLoggingEnabled: false, // Désactive l'enregistrement des informations personnelles
+    },
+  },
 };
 
-
+// Demande de connexion avec les scopes requis
 export const loginRequest = {
-  // scopes: ["openid","profile","User.Read","Forecast.Read"]
-  scopes: SCOPE
+  scopes: ["openid", "profile", "email"], // Scopes pour l'authentification
 };
 
-/**
- * Add here the scopes to request when obtaining an access token for MS Graph API. For mor information, see:
- * https://github.com/AzureAD/microsoft-authentication-library-for-js/blob/dev/lib/msal-browser/docs/resources-and-scopes.md
- */
+// Configuration pour les requêtes Microsoft Graph
 export const graphConfig = {
-  graphMeEndpoint: "https://graph.microsoft.com/v1.0/me",
+  graphMeEndpoint: "https://graph.microsoft.com/v1.0/me", // Endpoint Graph API pour récupérer les informations de l'utilisateur
 };
 
+// Demande de token avec les scopes nécessaires
 export const tokenRequest = {
-  scopes: ["Mail.Read"]
-}
+  scopes: ["openid", "profile", "email"], // Scopes pour l'acquisition d'un token
+};
 
-export const msalInstance = new msal.PublicClientApplication(msalConfig);
+// Initialisation de l'instance MSAL
+export const msalInstance = new PublicClientApplication(msalConfig);

@@ -8,8 +8,8 @@ switch (Environment) {
     case "Local":
         URL_API = "https://localhost:7172";
         URI_REDIRECTION = 'https://localhost:3000';
-        CLIENT_ID = 'dfce370d-4bfb-444e-ad41-7e50e0b9f12e';
-        AUTHORITHY = 'https://login.microsoftonline.com/088e9b00-ffd0-458e-bfa1-acf4c596d3cb';
+        CLIENT_ID = 'c1224560-ff62-4122-becf-1ccad1467587';
+        AUTHORITHY = 'https://login.microsoftonline.com/77236ce3-4c53-4cc0-a78f-2a576a60d0cf';
         //SCOPE = ['api://dfce370d-4bfb-444e-ad41-7e50e0b9f12e/.default'];
         SCOPE = ["openid", "profile", "email"]
         break;

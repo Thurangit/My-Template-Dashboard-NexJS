@@ -1,6 +1,6 @@
 
-import API from "@/pages/api/API";
-import settings, { headers } from "@/pages/api/config";
+import API from "@/redux/API";
+import settings, { headers } from "@/redux/config";
 import { ADD_USER_ROLE_FAILURE,
      ADD_USER_ROLE_REQUEST, 
      ADD_USER_ROLE_SUCCESS,

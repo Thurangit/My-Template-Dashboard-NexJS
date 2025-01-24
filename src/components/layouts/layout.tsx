@@ -33,26 +33,24 @@ export default function RootLayout({
   return (
       <div className={`${inter.className} flex h-screen bg-gray-100 overflow-hidden`}>
         <div className="flex w-full">
-          {!isMobile && (
+          {/* {!isMobile && (
             <Sidebar 
               isOpen={isSidebarOpen} 
               toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} 
             />
-          )}
+          )} */}
           
           <div className={`
             flex-1 
             flex 
             flex-col 
-            ${!isMobile && isSidebarOpen ? 'md:ml-64' : 'ml-0'}
             transition-all 
             duration-300
             h-full
             overflow-hidden
           `}>
             <Navbar 
-              toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
-              isMobile={isMobile}
+            
             />
             
             {isMobile && isSidebarOpen && (

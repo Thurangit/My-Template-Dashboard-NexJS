@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import logo from "@/utilities/images/logos/logo_AGL_rgb_Blue.png"
+import { THEMES } from './themes';
 import Image from 'next/image';
 import { useOrganizationStore } from './storeoftheme';
 interface LoaderProps {
@@ -17,7 +18,23 @@ interface SeparateurPropos {
 const Loader: React.FC<LoaderProps> = ({ isLoading }) => {
 
     const { currentOrganization, getCurrentTheme } = useOrganizationStore();
+    const { setCurrentOrganization } = useOrganizationStore();
     const theme = getCurrentTheme();
+    const handleOrganizationSelect = (org: {
+      id: string;
+      name: string;
+      code: keyof typeof THEMES;
+      logo?: string;
+    }) => {
+      // Ensure the organization code is valid
+      if (THEMES[org.code]) {
+        setCurrentOrganization(org);
+        // Additional logic like closing dropdown can be added here
+      } else {
+        console.error(`Invalid organization code: ${org.code}`);
+      }
+    };
+   
 
     return (
         <AnimatePresence>

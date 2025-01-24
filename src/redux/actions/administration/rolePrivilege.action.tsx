@@ -16,8 +16,8 @@ import {
   GET_ROLE_PRIVILEGE_REQUEST,
   GET_ROLE_PRIVILEGE_SUCCESS
 } from "@/redux/types/administration/rolePrivilege.type";
-import API from "@/pages/api/API";
-import settings, { headers } from "@/pages/api/config";
+import API from "@/redux/API";
+import settings, { headers } from "@/redux/config";
 
 
 

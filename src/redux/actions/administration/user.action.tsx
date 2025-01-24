@@ -19,8 +19,8 @@ import {
     GET_ROLE_SUCCESS
 } from "@/redux/types/administration/utilisateurs/role.type";
 import axios from "axios";
-import API from "@/pages/api/API";
-import settings, { headers } from "@/pages/api/config";
+import API from "@/redux/API";
+import settings, { headers } from "@/redux/config";
 
 // Users
 export const addUser = (data: any) => (dispatch: any) => {

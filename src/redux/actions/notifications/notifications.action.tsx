@@ -19,8 +19,8 @@ import {
   GET_NOTIFICATIONS_REQUEST,
   GET_NOTIFICATIONS_SUCCESS
 } from "@/redux/types/notifications/notifications.type";
-import API from "@/pages/api/API";
-import settings, { headers } from "@/pages/api/config";
+import API from "@/redux/API";
+import settings, { headers } from "@/redux/config";
 
 
 export const getNotificationPagine = (params: any) => (dispatch: any) => {

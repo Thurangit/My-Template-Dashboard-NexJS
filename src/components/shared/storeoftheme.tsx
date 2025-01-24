@@ -13,6 +13,7 @@ type OrganizationState = {
   setCurrentOrganization: (org: Organization) => void
   getCurrentTheme: () => {
     logo: any
+    cygle: string
     sidebar: {
       background: string
       text: string

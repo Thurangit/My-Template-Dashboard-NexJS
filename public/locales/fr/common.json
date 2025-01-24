@@ -23,6 +23,14 @@
     "menu6": "Composants",
     "menu6_submenu1": "demande",
     "menu6_submenu2": "reporting",
-    "menu6_submenu3": "carte"
+    "menu6_submenu3": "carte",
+    "card1": "Sociétés",
+    "subcard1": "Sociétés concernées",
+    "card2": "Applications",
+    "subcard2": "Applications concernées",
+    "card3": "En cours",
+    "subcard3": "Demandes en cours de traitement",
+    "card4": "Accès créés",
+    "subcard4": "Demandes acceptées"
    
   }

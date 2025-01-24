@@ -5,12 +5,12 @@ import { DashboardCard } from '@/components/shared/dashboardCard';
 import { GeoLocationMap } from '@/components/shared/map';
 import { BarPie } from '@/components/shared/charts';
 import {
-
     Users,
     Building2,
     LaptopMinimal,
     FileClockIcon
 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 
 
@@ -19,7 +19,6 @@ import {
 
 
 // Composant de card
-
 const CUSTOM_LOCATION = {
     latitude: 4.0465,
     longitude: 9.6966,
@@ -31,38 +30,39 @@ const CUSTOM_LOCATION = {
 };
 // Composant principal du dashboard
 const MainNextDashboard: React.FC = () => {
+    const { t } = useTranslation('common');
     // Données des cartes - vous pouvez facilement les modifier
     const cardData = [
         {
             icon: Building2,
-            label: "Sociétés",
+            label: t('card1'),
             value: "29",
-            description: "Sociétés concernées",
+            description: t('subcard1'),
             color: "bg-blue-50",
             bottomColor: "bg-blue-500"
         },
 
         {
             icon: LaptopMinimal,
-            label: "Applications",
+            label: t('card2'),
             value: 8,
-            description: "Applications concernées",
+            description: t('subcard2'),
             color: "bg-purple-50",
             bottomColor: "bg-purple-500"
         },
         {
             icon: FileClockIcon,
-            label: "En cours",
+            label: t('card3'),
             value: "15",
-            description: "Demandes en cours de traitement",
+            description: t('subcard3'),
             color: "bg-orange-50",
             bottomColor: "bg-orange-500"
         },
         {
             icon: Users,
-            label: "Accès créés",
+            label: t('card4'),
             value: 238,
-            description: "Demandes acceptées",
+            description: t('subcard4'),
             color: "bg-green-50",
             bottomColor: "bg-green-500"
         },
@@ -88,6 +88,9 @@ const MainNextDashboard: React.FC = () => {
             variant: 'outlined',
             description: 'Description de l\'étape 4'
         },
+
+
+        
         {
             label: 'Demande accepté',
             color: 'success',

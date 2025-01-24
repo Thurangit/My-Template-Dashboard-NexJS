@@ -1,129 +1,117 @@
-// // components/ProtectedRoute.js
 import { useMsal } from "@azure/msal-react";
 import { useContext, useEffect, useState } from "react";
-//import { useRouter } from "next/router";
-import { graphConfig, loginRequest, msalInstance } from "./msalConfig";
-//import { InteractionRequiredAuthError } from "@azure/msal-browser";
+import { graphConfig, loginRequest } from "./msalConfig";
+import { InteractionRequiredAuthError } from "@azure/msal-browser";
 import { useDispatch } from "react-redux";
-import { getProfileM365UUID } from "@/redux/actions/administration/user.action";
-import { getRolePrivilegeByRoleId } from "@/redux/actions/administration/rolePrivilege.action";
-import React, { createContext } from 'react';
+import React, { createContext } from "react";
 
+// Interfaces
+interface AuthContextType {
+  user: any[];
+  state: any[];
+  role: any[];
+}
 
+interface AuthProviderProps {
+  children: React.ReactNode;
+}
 
-
-// Créer un contexte d'authentification
-const AuthContext = createContext<any>(null);
+// Contexte
+const AuthContext = createContext<AuthContextType>({
+  user: [],
+  state: [],
+  role: []
+});
 
 export const useAuthe = () => useContext(AuthContext);
 
-
-const AuthProvider: React.FC = ({ children }: any) => {
+const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const { instance, accounts } = useMsal();
-  //const router = useRouter();
-  const [role, setRole] = useState([]);
-  const [state, setState] = useState([]);
-  const [user, setUser] = useState([]); // récupérer l'utilisateur connecté
-  const [rolePrivilege, setRolePrivilege] = useState([])
-  const [labels, setLabels] = useState([]);
-
+  const [isMsalInitialized, setIsMsalInitialized] = useState(false); // Vérifie l'initialisation
+  const [role, setRole] = useState<any[]>([]);
+  const [state, setState] = useState<any[]>([]);
+  const [user, setUser] = useState<any[]>([]);
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    
-      //const activeAccount = msalInstance.getActiveAccount();
-      
-      if (!accounts || accounts.length === 0) {
-        // Utiliser handleRedirectPromise pour ne rediriger que si nécessair
-         instance.handleRedirectPromise()
-          .then((response: any) => {
-            if (response) {
-              console.log("Redirection réussie :", response);
-              sessionStorage.setItem('token', JSON.stringify(response.idToken));
-              console.log("Token 1 : ",response.idToken)
-              fetchUserProfile(response.idToken);
-            }
-          })
-          .catch((error: any) => {
-            console.error("Erreur de redirection :", error);
-          });
-  
-        // Après la redirection, si toujours pas de compte, alors déclencher login
-        if (!msalInstance.getActiveAccount()) {
-          instance.loginRedirect(loginRequest)
-            .catch((error: any) => {
-              console.error('Erreur lors de la tentative de connexion :', error);
-            });
+    // Vérifiez si MSAL est initialisé
+    const initializeMsal = async () => {
+      try {
+        // Assurez-vous que MSAL est prêt
+        await instance.initialize(); // Assurez-vous que `initialize` est appelé
+
+        const activeAccount = instance.getActiveAccount();
+        if (!accounts || accounts.length === 0) {
+          // Si l'utilisateur n'est pas connecté, redirigez-le
+          await instance.loginRedirect(loginRequest);
         }
-      } 
-  
-  }, [instance]);
-  
-  // Fonction pour récupérer les informations de profil utilisateur
-  const fetchUserProfile = (accessToken: any) => {
-    const headers = new Headers();
-    headers.append("Authorization", "Bearer " + accessToken);
-    
-    fetch(graphConfig.graphMeEndpoint, { method: "GET", headers })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log("Profil utilisateur :", data);
-      })
-      .catch((error) => console.error("Erreur lors de la récupération du profil utilisateur :", error));
-  };
-  
+        setIsMsalInitialized(true); // Confirme que MSAL est prêt
+      } catch (error) {
+        console.error("Erreur lors de l'initialisation de MSAL :", error);
+      }
+    };
 
-  const dispatch: any = useDispatch();
-
-  const UUID = accounts[0]?.idTokenClaims?.oid;
-
+    initializeMsal();
+  }, [instance, accounts]);
 
   useEffect(() => {
-    dispatch(getProfileM365UUID(UUID))
-      .then((res: any) => {
-        console.log('utilisateur connecté', res);
-        setUser(res);
-        setRole(res.roles);
-        setState(res.states)
-      })
-      .catch((err: any) => {
-        console.error(err);
-      });
-  }, [UUID]);
+    if (!isMsalInitialized) return; // Attendre l'initialisation
 
-  useEffect(() => {
-    if (role.length > 0) {
-      Promise.all(role.map((r: any) => dispatch(getRolePrivilegeByRoleId(r.id))))
-        .then((responses) => {
-          console.log('privileges', responses);
-          const allPrivileges: any = responses.flat();
-          setRolePrivilege(allPrivileges);
-        })
-        .catch((err) => {
-          console.error(err);
+    const fetchTokenAndUserData = async () => {
+      try {
+        const activeAccount = instance.getActiveAccount();
+        const tokenResponse = await instance.acquireTokenSilent({
+          ...loginRequest,
+          account: activeAccount || accounts[0]
         });
-    }
-  }, [role]);
 
-  useEffect(() => {
-    if (rolePrivilege.length > 0) {
-      const extractedLabels: any = rolePrivilege.map((item: any) => item.privilege?.label).filter(Boolean);
-      setLabels(extractedLabels);
-    }
-  }, [rolePrivilege]);
+        console.log("Token response", tokenResponse);
 
+        sessionStorage.setItem(
+          "token",
+          JSON.stringify(tokenResponse.idToken)
+        );
 
-  const getAllPrivileges = [...new Set(labels)].map(label => ({ label }));
+        // Récupérer les informations utilisateur via MS Graph
+        const headers = new Headers();
+        const bearer = "Bearer " + tokenResponse.accessToken;
+        headers.append("Authorization", bearer);
 
-  console.log('les roles privileges', getAllPrivileges)
-  //console.log('welcome',accounts[0].idTokenClaims.oid)
+        const options = {
+          method: "GET",
+          headers: headers
+        };
 
+        const response = await fetch(graphConfig.graphMeEndpoint, options);
+        const userData = await response.json();
+        setUser(userData); // Met à jour les données utilisateur
+      } catch (error) {
+        if (error instanceof InteractionRequiredAuthError) {
+          // Revenir à une interaction en cas d'échec silencieux
+          await instance.acquireTokenPopup(loginRequest);
+        } else {
+          console.error(
+            "Erreur lors de la récupération du token ou des données utilisateur :",
+            error
+          );
+        }
+      }
+    };
+
+    fetchTokenAndUserData();
+  }, [isMsalInitialized, instance, accounts]);
+
+  const contextValue: AuthContextType = {
+    user,
+    state,
+    role
+  };
 
   return (
-    <AuthContext.Provider value={{ getAllPrivileges, user, state, role }}>
+    <AuthContext.Provider value={contextValue}>
       {children}
     </AuthContext.Provider>
   );
 };
 
 export default AuthProvider;
-

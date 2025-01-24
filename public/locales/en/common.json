@@ -23,7 +23,13 @@
     "menu6": "Component",
     "menu6_submenu1": "Request",
     "menu6_submenu2": "Power BI",
-    "menu6_submenu3": "Maps"
-    
-   
+    "menu6_submenu3": "Maps",
+    "card1": "Compagny",
+    "subcard1": "Concerned Companies",
+    "card2": "Applications",
+    "subcard2": "Concerned applications",
+    "card3": "In progress",
+    "subcard3": "Applications in process",
+    "card4": "Accesses created",
+    "subcard4": "Accepted requests"
   }

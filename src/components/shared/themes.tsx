@@ -5,7 +5,8 @@ import logoSCP from "@/utilities/images/logos/logoScpao.jpg"
 export const THEMES = {
   agl:
   {
-    logo: logoAGL,
+    logo: "https://th.bing.com/th?q=Logos+AGL&w=120&h=120&c=1&rs=1&qlt=90&cb=1&pid=InlineBlock&mkt=en-WW&cc=CM&setlang=fr&adlt=moderate&t=1&mw=247",
+    cygle: "AGL",
     sidebar: {
       background: 'bg-[#1A3659]', // Bleu foncé
       text: 'text-white',
@@ -42,6 +43,7 @@ export const THEMES = {
   scp:
   {
     logo: "https://th.bing.com/th/id/OIP.f4aBIvV4X2a7EiKDoPA4hgAAAA?rs=1&pid=ImgDetMain",
+    cygle: "SOCOPAO",
     sidebar: {
       background: 'bg-[#B22222]', // Bleu foncé
       text: 'text-white',

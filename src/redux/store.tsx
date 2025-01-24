@@ -7,6 +7,8 @@ import userReducer from './reducers/administration/utilisateurs/user.reducer';
 import roleReducer from './reducers/administration/utilisateurs/role.reducer';
 import rolePrivilegeReducer from './reducers/administration/rolePrivilege';
 import userRoleReducer from './reducers/administration/utilisateurs/userRole.reducer';
+import menuReducer from './reducers/routing/menu.reducer';
+import submenuReducer from './reducers/routing/submenu.reducer';
 
 
 const store = configureStore({
@@ -15,8 +17,10 @@ const store = configureStore({
     roleReducer,
     rolePrivilegeReducer,
     userRoleReducer,
+    menuReducer,
+    submenuReducer,
   }),
-  devTools: true,
+  devTools: false,
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       thunk: true,
